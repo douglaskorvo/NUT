@@ -1405,7 +1405,7 @@ set InitializePersonalOptions {
 
 proc InitializePersonalOptions {args} {
 
- db eval {select autocal, wlpolarity, wltweak from options} { }
+ db eval {select autocal, wltweak from options} { }
 
  if {$::ENERC_KCALopt == -1.0} {
   .nut.po.pane.optframe.cal_s configure -state disabled -textvariable ::ENERC_KCALdv
@@ -1630,7 +1630,7 @@ set RefreshWeightLog {
 
 proc RefreshWeightLog {args} {
  db eval {select *, "::weightslope" - "::fatslope" as leanslope from weightslope, fatslope} { }
- db eval {select autocal, wlpolarity, wltweak from options} { }
+ db eval {select autocal, wltweak from options} { }
  if {$autocal == 2} {
   if {!$::ALTGUI} {
    grid remove .nut.po.pane.wlogframe.clear
@@ -1671,7 +1671,7 @@ proc RefreshWeightLog {args} {
   }
  set ::span [db eval { select abs(min(cast (julianday(substr(wldate,1,4) || '-' || substr(wldate,5,2) || '-' || substr(wldate,7,2)) - julianday('now', 'localtime') as int))) from wlog where cleardate is null } ]
  set CASmode Bulking
- if {($leanslope > 0.0 && $::fatslope > 0.0) || ($wlpolarity == 0 && $::fatslope > 0.0)} {set CASmode Cutting}
+ if {$::fatslope > 0.0} {set CASmode Cutting}
  set datapoints [db eval {select count(*) from wlog where cleardate is null}]
  if {$datapoints > 1} {
   set ::wlogsummary "Based on the trend of $datapoints data points so far...\n\nPredicted lean mass today = [expr {round(10.0 * ($::weightyintercept - $::fatyintercept)) / 10.0 }]\n\nPredicted fat mass today = $::fatyintercept\n\nIf the predictions are correct, you [expr {$leanslope >= 0.0 ? "gained" : "lost"}] [expr {abs(round($leanslope * $::span * 1000.0) / 1000.0)}] lean mass over $::span [expr {$::span == 1 ? "day" : "days"}] and [expr {$::fatslope >= 0.0 ? "gained" : "lost"}] [expr {abs(round($::fatslope * $::span * 1000.0) / 1000.0)}] fat mass.\n\n[expr {$autocal == 2 ? "Calorie Auto-Set Mode = $CASmode" : ""}]"
@@ -1692,7 +1692,7 @@ proc ClearWeightLog {args} {
 db eval {select * from wlog order by wldate desc limit 1} { }
 db eval {update wlog set cleardate = $wldate where cleardate is null}
 db eval {insert into wlog values ($weight, $bodyfat, $wldate, NULL)}
-db eval {update options set wltweak = 0, wlpolarity = case when wlpolarity = 1 then 0 else 1 end}
+db eval {update options set wltweak = 0}
 RefreshWeightLog
 }
 
@@ -1705,10 +1705,10 @@ proc AcceptNewMeasurements {args} {
 set today [db eval {select strftime('%Y%m%d', 'now', 'localtime')}]
 db eval {insert into wlog values ( $::weightyintercept, $::currentbfp, $today, NULL)}
 RefreshWeightLog
-db eval {select autocal, wlpolarity, wltweak, "::weightslope", "::fatslope", "::weightslope" - "::fatslope" as leanslope, "::fatyintercept" from options, weightslope, fatslope} { }
+db eval {select autocal, wltweak, "::weightslope", "::fatslope", "::weightslope" - "::fatslope" as leanslope, "::fatyintercept" from options, weightslope, fatslope} { }
 
 if {$autocal == 2} {
- if {$leanslope > 0.0 && $::fatslope > 0.0} {
+ if {$::fatslope > 0.0} {
   set ::ENERC_KCALopt [expr {$::ENERC_KCALopt - 20.0}]
   db eval {update options set wltweak = 1}
   auto_cal
@@ -1716,19 +1716,11 @@ if {$autocal == 2} {
   set ::ENERC_KCALopt [expr {$::ENERC_KCALopt + 20.0}]
   db eval {update options set wltweak = 1}
   auto_cal
-  } elseif {$wlpolarity == 0 && $::fatslope > 0.0} {
-  set ::ENERC_KCALopt [expr {$::ENERC_KCALopt - 20.0}]
-  db eval {update options set wltweak = 1}
-  auto_cal
-  } elseif {$wlpolarity == 1 && $leanslope < 0.0} {
-  set ::ENERC_KCALopt [expr {$::ENERC_KCALopt + 20.0}]
-  db eval {update options set wltweak = 1}
-  auto_cal
   } elseif {$leanslope > 0.0 && $::fatslope < 0.0 && $wltweak == 1} {
   db eval {update wlog set cleardate = $today where cleardate is NULL}
   set ::currentbfp [expr {round(1000.0 * $::fatyintercept / $::weightyintercept) / 10.0}]
   db eval {insert into wlog values ( $::weightyintercept, $::currentbfp, $today, NULL)}
-  db eval {update options set wltweak = 0, wlpolarity = case when wlpolarity = 1 then 0 else 1 end}
+  db eval {update options set wltweak = 0}
   }
  }
 
@@ -2139,7 +2131,7 @@ proc PCF {seq ndb args} {
  upvar 0 $ndbName ndbvar $dvName dvvar $rmName rmvar
  set factor [lindex $::MealfoodPCFfactor $seq]
  set ::nutvalchange [expr {($dvvar - $rmvar) * 100.0 / $dvvar}]
- if {$::nutvalchange < 0.5 && $::nutvalchange > -0.5} {return}
+ if {$::nutvalchange < 0.05 && $::nutvalchange > -0.05} {return}
  if {[expr {($dvvar - $rmvar)}] == 0.0} {return}
  if {($::GRAMSopt && abs($ndbvar) >= 1350.0) || (!$::GRAMSopt && abs($ndbvar) >= 135.0)} {
   if {$ndbvar > 0.0} { 
@@ -4598,7 +4590,7 @@ proc drawClock {} {
         set y [expr {cos($PI/6*(6-$i))*$innenradius+[expr {$::clockscale * 100}]}]
         .loadframe.c create text $x $y \
                 -text [expr {$i ? $i : 12}] \
-                -font "Helvetica [expr {int($::clockscale * 30 / $::magnify * $::appSize)}] bold" \
+                -font TkSmallCaptionFont \
                 -fill #000000 \
                 -tag ziffer
     }
@@ -7894,7 +7886,7 @@ if {[dbmem eval {select count(*) from options}] == 0} {
 }
 
 db eval {BEGIN}
-db eval {insert or replace into version values('NUTsqlite 1.9.4',NULL)}
+db eval {insert or replace into version values('NUTsqlite 1.9.5',NULL)}
 db eval {delete from tcl_code}
 db eval {insert or replace into tcl_code values('Main',$Main)}
 db eval {insert or replace into tcl_code values('InitialLoad',$InitialLoad)}

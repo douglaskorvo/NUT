@@ -384,12 +384,9 @@ lean mass and loss of fat mass.
 will move calories by a maximum of 20 calories a day.
 If both lean mass and fat mass are trending down, 
 <B>NUT</B> 
-raises calories; if both lean mass and fat mass are trending up,
+raises calories; if fat mass is trending up,
 <B>NUT</B>
-lowers calories.  When fat mass is trending up and lean mass is trending
-down, 
-<B>NUT</B> alternates between
-a cycle to prevent fat mass gain and a cycle to prevent lean mass loss.
+lowers calories.
 A cycle ends when fat mass is trending down and lean mass is trending up, and when a
 cycle begins with these favorable trends, it is allowed to continue.
 <P>
@@ -547,30 +544,14 @@ from the database using the meal_date and meal number like this:
 <P>
 <B><PRE>
 sqlite> delete from meal_foods where meal_date = 20150413 and meal = 3;
-</B></PRE>   
-<P>
-Here's an interesting factoid about the Calorie Auto-Set feature:
-it alternates between a cycle that tries to lower fat mass and a cycle that
-tries to increase lean mass.  Which cycle are we in now?  The answer is
-the "wlpolarity" column in the "options" table.  "1" means to try to increase
-lean mass and "0" means to try to decrease fat mass.
-<P>                                   
-<B><PRE>
-sqlite> select wlpolarity from options;
-1
-</B></PRE>   
-<P>
-If I want to change this cycle to primarily a fat loss cycle:
-<P>                                   
-<B><PRE>
-sqlite> update options set wlpolarity = 0;
-</B></PRE>   
+</B></PRE>
 <P>
 Although you can update some of the 
 <B>NUT</B>
-data manually as in this example,
+data manually as in the previous examples,
 do note that if you update nutrient values in the food_des
-table, your updates will not propagate to the meals table unless you reload the
+table, your updates will not propagate to the
+existing meals in the meals table unless you reload the
 USDA nutrient database, this as a consequence of the table joins done at load time to
 improve performance at
 runtime.
@@ -673,7 +654,7 @@ Now a food question relevant to ketogenic diets:  How do the lettuces rate for
 maximum potassium per gram of non-fiber carb?
 <P>
 <B><PRE>
-sqlite> select NDB_No, Shrt_Desc, round(K / CHO_NONFIB) as val from food_des where Long_Desc like '%lettuce%' order by val desc limit 5;
+sqlite> select NDB_No, Shrt_Desc, round(K / CHO_NONFIB) as val from food_des where Long_Desc like 'Lettuce%' order by val desc;
 11250|Lettuce,butterhead (incl boston&bibb types),raw|211.0
 11251|Lettuce, cos or romaine, raw (lactuca sativa var. logifolia)|208.0
 11257|Lettuce, red leaf, raw (lactuca sativa var. crispa)|138.0

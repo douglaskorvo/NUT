@@ -1,3 +1,14 @@
+2015-08-02 NUTsqlite-1.9.5 released.
+
+2015-08-02 Changed font on analog clock in alternate GUI load screen.  It
+           scales better even if it is slightly less classy.
+
+2015-08-01 I've changed my mind on how calorie auto-set should work.  It now
+           will not allow fat mass to go up.  I finally found the backup of
+           my old historical weight logs, and this is how I got the best
+           results except when I was eating very high carb.  These changes are
+           in proc AcceptNewMeasurements.
+
 2015-07-15 NUTsqlite-1.9.4 released.
 
 2015-07-14 The original GUI works well on Windows and Mac, so it is retained if
