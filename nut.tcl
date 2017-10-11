@@ -30,9 +30,10 @@ set DiskDB nut.sqlite
 set LegacyFileDir "~/.nutdb"
 
 # appSize is a factor to create fonts and windows that match screen resolution.
-# Since some Tk features don't work right with this, 0.0 turns it off.  But,
-# sizes between approximately 0.7 and 1.3 go between small and almost
-# fullscreen if needed for legibility.
+# 0.0 works well on Windows and the Mac, but on Linux,
+# appSizes between 0.7 and 1.3 go between small to almost fullscreen
+# and look the same at all screen resolutions when you don't have a
+# resolution-independent window manager.
 set appSize 0.0
 
 #

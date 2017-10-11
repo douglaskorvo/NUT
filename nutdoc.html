@@ -354,7 +354,8 @@ reports its findings with high precision, realize that the numbers are not
 absolutely true, but you are concerned with the trends the numbers represent, so that you can modify your nutrition
 strategy.
 For example, if total weight is fairly constant but lean mass is going down and
-fat mass is going up, would a little more protein solve the problem? or would it make it worse?
+fat mass is going up, would a little more protein 
+or less carbohydrate solve the problem? or would it make it worse?
 <P>
 To use the feature, weigh yourself once a day at some appointed time and
 enter the weight and bodyfat numbers; then click on "Accept New Measurements".
@@ -493,6 +494,33 @@ sqlite> select wldate from wlog where weight - weight * bodyfat / 100 = (select 
 20110706
 </B></PRE>
 <P>
+Increasing lean mass is great, but as the sole measure of  body
+composition 
+it leads to obesity; decreasing fat mass is great,
+but as the sole measure of  body composition it leads to frailty.
+What we need is an equation  which increases in value as body
+composition improves.  Perhaps the simplest is lean mass minus fat mass, or in other words, what is the "spread" between the lean mass and the fat mass quantities:
+<P>
+<B><PRE>
+sqlite> select wldate, round(weight - weight * bodyfat / 100, 1) as leanmass, round(weight * bodyfat / 100, 1) as fatmass, round(weight - 2 * weight * bodyfat / 100, 1) as bodycomp from wlog group by wldate; 
+20150603|122.9|34.3|88.7
+20150605|123.4|33.2|90.2
+20150606|122.9|34.1|88.9
+20150607|123.2|33.2|90.1
+20150608|123.7|33.1|90.6
+20150609|123.2|33.8|89.5
+20150610|123.6|33.1|90.6
+20150611|124.0|33.4|90.7
+20150612|124.0|33.4|90.7
+20150613|123.9|33.1|90.7
+20150614|123.6|33.0|90.5
+20150615|123.9|32.3|91.5
+20150616|123.9|32.5|91.3
+20150617|124.2|32.4|91.8
+20150618|124.8|32.8|92.0
+20150619|125.3|32.3|93.0
+</B></PRE>
+<P>
 Now, let's turn to a different task.  I've created a bad recipe and I want to
 delete it from the database.  First, I find the record in the food_des table and
 ask to see  "NDB_No", the primary key for foods:
@@ -604,6 +632,22 @@ A "natural join" means you don't have to specify the columns you are using for
 a join between tables, and the database has been set up so that natural joins 
 will
 work most of the time to get useful results.
+<P>
+If I want to see the previous query every day but it is too much of a drag to
+type it in every time, I can create a view:
+<P>
+<B><PRE>
+sqlite> create view weeklycost as select meal_date, round(sum(mhectograms * cost),2) from mealfoods natural join food_des natural join cost group by meal_date order by meal_date desc limit 7;
+sqlite> select * from weeklycost;
+20150224|10.32
+20150223|10.16
+20150222|10.74
+20150221|10.04
+20150220|10.84
+20150219|10.6
+20150218|10.84
+</B></PRE>
+<P>
 Here's how I find which of the foods I buy is the cheapest source of copper (see below for how I know the copper column is named "CU"):
 <P>
 <B><PRE>
