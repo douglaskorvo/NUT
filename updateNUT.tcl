@@ -1454,6 +1454,11 @@ proc InitializePersonalOptions {args} {
   set ::CHO_NONFIBpo 0 
   .nut.po.pane.optframe.fat_cb2 configure -text "Balance of Calories"
   }
+ if {$::ENERC_KCALopt == -1.0} {
+  .nut.po.pane.optframe.fat_cb2 configure -text "DV 30% of Calories"
+  .nut.po.pane.optframe.nfc_cb2 configure -text "DV 60% of Calories"
+  }
+  
 
  if {$::FIBTGopt == -1.0} {
   .nut.po.pane.optframe.fiber_s configure -state disabled -textvariable ::FIBTGdv
@@ -1511,14 +1516,20 @@ proc ChangePersonalOptions {nuttag args} {
    db eval {update options set autocal = 2}
    set ::ENERC_KCALopt $::ENERC_KCALdv
    .nut.po.pane.optframe.cal_s configure -state normal -textvariable ::ENERC_KCALopt
+   .nut.po.pane.optframe.nfc_cb2 configure -text "Balance of Calories"
+   .nut.po.pane.optframe.nfc_cb2 invoke
    } elseif {$povar == 0} {
    db eval {update options set autocal = 0}
    set ::ENERC_KCALopt $::ENERC_KCALdv
    .nut.po.pane.optframe.cal_s configure -state normal -textvariable ::ENERC_KCALopt
+   .nut.po.pane.optframe.nfc_cb2 configure -text "Balance of Calories"
+   .nut.po.pane.optframe.nfc_cb2 invoke
    } else {
    db eval {update options set autocal = 0}
    .nut.po.pane.optframe.cal_s configure -state disabled -textvariable ::ENERC_KCALdv
    set ::ENERC_KCALopt -1
+   .nut.po.pane.optframe.fat_cb2 configure -text "DV 30% of Calories"
+   .nut.po.pane.optframe.nfc_cb2 configure -text "DV 60% of Calories"
    }
   RefreshWeightLog
   } elseif {$nuttag == "FAT"} {
@@ -1528,13 +1539,13 @@ proc ChangePersonalOptions {nuttag args} {
    } elseif {$povar == 0} {
    set ::FATopt $::FATdv
    .nut.po.pane.optframe.fat_s configure -state normal -textvariable ::FATopt
-   if {$::CHO_NONFIBopt != 0.0} {
+   if {$::CHO_NONFIBopt != 0.0 && $::ENERC_KCALopt >= 0.0} {
     .nut.po.pane.optframe.nfc_cb2 invoke
     }
    } else {
    .nut.po.pane.optframe.fat_s configure -state disabled -textvariable ::FATdv
    set ::FATopt -1
-   if {$::CHO_NONFIBopt != 0.0} {
+   if {$::CHO_NONFIBopt != 0.0 && $::ENERC_KCALopt >= 0.0} {
     .nut.po.pane.optframe.nfc_cb2 invoke
     }
    }
@@ -1558,14 +1569,14 @@ proc ChangePersonalOptions {nuttag args} {
    set ::CHO_NONFIBopt $::CHO_NONFIBdv
    .nut.po.pane.optframe.nfc_s configure -state normal -textvariable ::CHO_NONFIBopt
    .nut.po.pane.optframe.fat_cb2 configure -text "Balance of Calories"
-   if {$::FATopt != 0.0} {
+   if {$::FATopt != 0.0 && $::ENERC_KCALopt >= 0.0} {
     .nut.po.pane.optframe.fat_cb2 invoke
     }
    } else {
    .nut.po.pane.optframe.nfc_s configure -state disabled -textvariable ::CHO_NONFIBdv
    set ::CHO_NONFIBopt -1
    .nut.po.pane.optframe.fat_cb2 configure -text "Balance of Calories"
-   if {$::FATopt != 0.0} {
+   if {$::FATopt != 0.0 && $::ENERC_KCALopt >= 0.0} {
     .nut.po.pane.optframe.fat_cb2 invoke
     }
    }
@@ -3411,7 +3422,7 @@ proc theusualPopulateMenu { } {
 set theusualAdd {
 
 proc theusualAdd {mealname} {
- set addlist [db eval {select t.NDB_No, PCF, Shrt_Desc from theusual t, food_des f using (NDB_No) where meal_name = $mealname order by Long_Desc asc}]
+ set addlist [db eval {select t.NDB_No, PCF, Shrt_Desc from theusual t, food_des f using (NDB_No) where meal_name = $mealname order by Shrt_Desc asc}]
  if {[llength $addlist] > 0} {
   if {!$::ALTGUI} {
    grid remove .nut.rm.setmpd
@@ -7863,7 +7874,7 @@ if {[dbmem eval {select count(*) from options}] == 0} {
 }
 
 db eval {BEGIN}
-db eval {insert or replace into version values('NUTsqlite 1.9.9.3',NULL)}
+db eval {insert or replace into version values('NUTsqlite 1.9.9.4',NULL)}
 db eval {delete from tcl_code}
 db eval {insert or replace into tcl_code values('Main',$Main)}
 db eval {insert or replace into tcl_code values('InitialLoad',$InitialLoad)}

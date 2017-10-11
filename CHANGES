@@ -1,3 +1,12 @@
+2017-02-22 NUTsqlite-1.9.9.4 released.
+
+2017-02-21 GUI not right for case when Calories are set to "adjust to my meals"
+           so I changed procs InitializePersonalOptions and 
+           ChangePersonalOptions to allow right fat and non-fiber carb choices.
+
+2016-11-30 In proc theusualAdd, order by Shrt_Desc instead of Long_Desc so meal
+           list menu looks more like it knows what it is doing.
+
 2016-10-22 NUTsqlite-1.9.9.3 released.
 
 2016-09-26 Changed AcceptNewMeasurements to return calorie auto-set feature to
