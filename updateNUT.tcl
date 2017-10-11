@@ -46,6 +46,7 @@ set Main {
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 package require Tk
+#ttk::setTheme alt
 
 db cache size 100
 
@@ -5074,6 +5075,9 @@ proc auto_cal {} {
   if {[string is double -strict $::OMEGA6am] && $::OMEGA6am > 0.0} {set ::OMEGA6dv [expr {($::OMEGA6am / $pufareductionfactor) - ($iter * 0.01 * ($::OMEGA6am / $pufareductionfactor))}]} else {set ::OMEGA6dv $::OMEGA6dv_default}
   if {[string is double -strict $::LAam] && $::LAam > 0.0} {set ::LAdv [expr {($::LAam / $pufareductionfactor) - ($iter * 0.01 * ($::LAam / $pufareductionfactor))}]} else {set ::LAdv $::LAdv_default}
   if {[string is double -strict $::AAam] && $::AAam > 0.0} {set ::AAdv [expr {($::AAam / $pufareductionfactor) - ($iter * 0.01 * ($::AAam / $pufareductionfactor))}]} else {set ::AAdv $::AAdv_default}
+  if {$::OMEGA6dv <= 0.0} {set ::OMEGA6dv $::OMEGA6dv_default}
+  if {$::LAdv <= 0.0} {set ::LAdv $::LAdv_default}
+  if {$::AAdv <= 0.0} {set ::AAdv $::AAdv_default}
   }
  
  }
@@ -5538,7 +5542,7 @@ proc changedv_vitmin {nut} {
 #end changedv_vitmin
 }
 
-db eval {insert or replace into version values('NUTsqlite 1.9.0',NULL)}
+db eval {insert or replace into version values('NUTsqlite 1.9.1',NULL)}
 db eval {delete from tcl_code}
 db eval {insert or replace into tcl_code values('Main',$Main)}
 db eval {insert or replace into tcl_code values('InitialLoad',$InitialLoad)}

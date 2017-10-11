@@ -1,3 +1,9 @@
+2014-12-18 NUTsqlite-1.9.1 released.
+
+2014-12-18 Fixed proc auto_cal to make OMEGA6, AA, and LA daily values have > 0.0 daily
+           values in cases where food has none and we get a error pop-up basically
+           complaining about division by zero.
+
 2014-11-07 NUTsqlite-1.9.0 released.
 
 2014-11-07 Just for laughs, I upgraded all my Tcl stuff with the ActiveTcl distribution.

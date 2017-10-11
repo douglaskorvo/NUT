@@ -240,10 +240,6 @@ These problems will be rare occurrences as
 <B>NUT</B>
 is able to recognize many combinations of foods and portion-control 
 settings that are not compatible.
-The technical explanation of the issue is that
-<B>NUT</B>
-uses an indeterminate iterative algorithm instead of a determinate solution of simultaneous equations because
-the latter method is often not numerically stable due to  the inexact representations of real numbers.
 <P>
 When you have a good meal planned and think you may want to repeat it, use
 the Customary Meals feature to save the meal.  Later, when you want something
@@ -269,9 +265,8 @@ calorie values, not any modifications you may have made from
 "Personal Options", so that they will match the nutrition labels; however,
 nutrient values can always be entered in grams.   When you "Save" this new recipe, it becomes just like any other food in the database.
 <P>
-<P>
-
-<P>
+Another use for "Save as a Recipe":  Use it to quickly delete an entire meal,
+and then cancel the recipe.
 <P>
 <B>VIEW FOODS</B>
 <P>
@@ -312,7 +307,7 @@ Either "Total Fat" or "Non-Fiber Carb" can be set to "Balance of Calories" and
 sometimes this option will automatically appear if required in order to meet
 the Calorie requirement.
 <P>
-The  options  for  polyunsatured fat and the "Omega-6/3 Balance" target
+The  options  for  polyunsaturated fat and the "Omega-6/3 Balance" target
 select reference values (there are no "Daily Values" for  these)  based
 on Dr. William Lands' empirical equation for the percentages of Omega-6
 and Omega-3 fatty acids in tissue phospholipids based on diet.  What this
@@ -408,7 +403,11 @@ lean mass if you are willing to gain a lot of fat mass, and that you can always
 lose fat mass if you are willing to lose a lot of lean mass.  What you are
 really looking for is the middle ground, where a
 change in calories impacts lean and fat about the same, and where your body
- feels most comfortable with itself.   Steady weight loss is best with a calorie level only slightly below what you need, not a massive and unsustainable slashing of calories.
+ feels most comfortable with itself.  
+You are looking for the diet with satisfying food choices that 
+naturally results in no
+weight gain without having to limit yourself.
+Steady weight loss is best with a calorie level only slightly below what you need, not a massive and unsustainable slashing of calories.
 <P>
 <B>THE STORY</B>
 <P>
@@ -559,6 +558,30 @@ ate the expensive egg yolks:
 <B><PRE>
 sqlite> select max(meal_date) from mealfoods where NDB_No = 99010;
 20140423
+</B></PRE>
+<P>
+Here's something you frugalvores might be interested in.  I added a table called "cost":
+<P>                         
+<B><PRE>
+sqlite> .schema cost
+CREATE TABLE cost (NDB_No int primary key, cost real, store text);
+</B></PRE>
+<P>
+The actual cost column is dollars per 100 grams of food and after I figure out the NDB_No for the food I set it with an insert command like this:
+<P>
+<B><PRE>
+sqlite> select NDB_No, Long_Desc from food_des where Long_Desc like '%romaine%';
+11251|Lettuce, cos or romaine, raw (Lactuca sativa var. logifolia)
+sqlite> insert into cost values (11251, 0.25841296, 'Smart & Final');
+</B></PRE>
+<P>
+This says that 100 grams of romaine lettuce costs about $0.25 when bought from Smart & Final.
+Here's how I find my actual cost per meal for my last two meals:
+<P>
+<B><PRE>
+sqlite> select meal_date * 100 + meal as meal_id, sum(cost * mhectograms) from mealfoods join cost on mealfoods.NDB_No = cost.NDB_No group by meal_id order by meal_id desc limit 2;
+2014112202|3.16653086590675
+2014112201|3.50747248718349
 </B></PRE>
 <P>
 The next query concerns how non-fiber carb has varied in my diet, but I
