@@ -29,12 +29,24 @@ set DiskDB nut.sqlite
 # LegacyFileDir is the directory where NUT-20.0 or before put its files
 set LegacyFileDir "~/.nutdb"
 
+set defaultAppSize      0.0
+set defaultLinuxAppSize 0.7
 # appSize is a factor to create fonts and windows that match screen resolution.
 # 0.0 works well on Windows and the Mac, but on Linux,
 # appSizes between 0.7 and 1.3 go between small to almost fullscreen
 # and look the same at all screen resolutions when you don't have a
 # resolution-independent window manager.
-set appSize 0.0
+
+# set appSize 1.0
+
+set OS [lindex $tcl_platform(os) 0]
+if {[info exists appSize]} {
+    # Already set. Do nothing
+} elseif { $OS == {Linux} } {
+    set appSize $defaultLinuxAppSize
+} else {
+    set appSize $defaultAppSize
+}
 
 # Do you need to cd to the right directory before the program starts?
 # If so, edit and uncomment the following line:
