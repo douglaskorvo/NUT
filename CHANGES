@@ -1,3 +1,13 @@
+2014-09-18 NUTsqlite-1.2 released.
+
+2014-09-18 Recipe scaling for water gained or lost in preparation is wrong.
+           Nothing is happening.  RecipeDone changed.  Removed "-strict" from
+           checking for doubles and fixed weight assignment that had wrong
+           syntax.
+
+2014-09-18 Recipe NDB_No starting too low in vicinity of USDA NDB_Nos.  Should
+           start at 99000.  RecipeSaveAs changed.
+
 2014-09-17 NUTsqlite-1.1 released.
 
 2014-09-15 Forgot that calorie change from Calorie Auto-Set will not provoke

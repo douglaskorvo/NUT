@@ -4175,7 +4175,7 @@ if {$foodweight <= 0.0} {
  return
  }
 db eval {insert into recipe select NULL, 9999, NULL, NULL, NULL, 0, NULL, NULL, * from meals where meal_id = $::currentmeal}
-db eval {update recipe set NDB_No = case when (select max(NDB_No) from food_des) > 89999 then (select max(NDB_No) from food_des) + 1 else 99000 end, Pro_Factor = case when ifnull(PROT_KCAL, 0.0) > 0.0 and ifnull(PROCNT, 0.0) > 0.0 then PROT_KCAL / PROCNT else 4.0 end, Fat_Factor = case when ifnull(FAT_KCAL, 0.0) > 0.0 and ifnull(FAT, 0.0) > 0.0 then FAT_KCAL / FAT else 9.0 end, CHO_Factor = case when ifnull(CHO_KCAL, 0.0) > 0.0 and ifnull(CHOCDF, 0.0) > 0.0 then CHO_KCAL / CHOCDF else 4.0 end, OMEGA6 = case when OMEGA6 is null then 0.0 else OMEGA6 end, OMEGA3 = case when OMEGA3 is null then 0.0 else OMEGA3 end, SHORT6 = case when SHORT6 is null then 0.0 else SHORT6 end, LONG6 = case when LONG6 is null then 0.0 else LONG6 end, SHORT3 = case when SHORT3 is null then 0.0 else SHORT3 end, LONG3 = case when LONG3 is null then 0.0 else LONG3 end}
+db eval {update recipe set NDB_No = case when (select max(NDB_No) from food_des) > 98999 then (select max(NDB_No) from food_des) + 1 else 99000 end, Pro_Factor = case when ifnull(PROT_KCAL, 0.0) > 0.0 and ifnull(PROCNT, 0.0) > 0.0 then PROT_KCAL / PROCNT else 4.0 end, Fat_Factor = case when ifnull(FAT_KCAL, 0.0) > 0.0 and ifnull(FAT, 0.0) > 0.0 then FAT_KCAL / FAT else 9.0 end, CHO_Factor = case when ifnull(CHO_KCAL, 0.0) > 0.0 and ifnull(CHOCDF, 0.0) > 0.0 then CHO_KCAL / CHOCDF else 4.0 end, OMEGA6 = case when OMEGA6 is null then 0.0 else OMEGA6 end, OMEGA3 = case when OMEGA3 is null then 0.0 else OMEGA3 end, SHORT6 = case when SHORT6 is null then 0.0 else SHORT6 end, LONG6 = case when LONG6 is null then 0.0 else LONG6 end, SHORT3 = case when SHORT3 is null then 0.0 else SHORT3 end, LONG3 = case when LONG3 is null then 0.0 else LONG3 end}
 set ::RecipeWeight [db eval {select total(mhectograms) from mealfoods where meal_date =  $::currentmeal / 100 and meal = $::currentmeal % 100}]
 db eval {delete from mealfoods where meal_date = $::currentmeal / 100 and meal = $::currentmeal % 100}
 set count -1
@@ -4698,7 +4698,7 @@ if {$count > 0} {
  tk_messageBox -type ok -title $::version -message "This recipe name is a duplicate of a food name in the table."
  return
  }
-if {![string is double -strict $::RecipeServNum]} {
+if {![string is double $::RecipeServNum]} {
  tk_messageBox -type ok -title $::version -message "\"Number of servings recipe makes\" must be a decimal number greater than zero."
  return
  } elseif {$::RecipeServNum <= 0.0} {
@@ -4709,14 +4709,14 @@ if {$::RecipeServUnit == {}} {
  tk_messageBox -type ok -title $::version -message "The \"Serving Unit\" must not be blank."
  return
  }
-if {![string is double -strict $::RecipeServUnitNum]} {
+if {![string is double $::RecipeServUnitNum]} {
  tk_messageBox -type ok -title $::version -message "\"Number of units in one serving\" must be a decimal number greater than zero."
  return
  } elseif {$::RecipeServUnitNum <= 0.0} {
  tk_messageBox -type ok -title $::version -message "\"Number of units in one serving\" must be a decimal number greater than zero."
  return
  }
-if {[string is double -strict $::RecipeServWeight]} {
+if {[string is double $::RecipeServWeight]} {
  if {$::GRAMSopt} {
   set newweight [expr {$::RecipeServWeight * $::RecipeServNum / 100.0}]
   } else {
@@ -4724,7 +4724,7 @@ if {[string is double -strict $::RecipeServWeight]} {
   }
  set diff [expr {100.0 * ($newweight - $::RecipeWeight)}] 
  db eval {update recipe set WATER = case when WATER + $diff < 0.0 then 0.0 else WATER + $diff end}
- set $::RecipeWeight $newweight
+ set ::RecipeWeight $newweight
  }
 set recipe100 [db eval {select sql from sql_statements where sqlname = 'recipe100'}]
 db eval {*}$recipe100
@@ -5479,7 +5479,7 @@ proc changedv_vitmin {nut} {
 #end changedv_vitmin
 }
 
-db eval {insert or replace into version values('NUTsqlite 1.1',NULL)}
+db eval {insert or replace into version values('NUTsqlite 1.2',NULL)}
 db eval {delete from tcl_code}
 db eval {insert or replace into tcl_code values('Main',$Main)}
 db eval {insert or replace into tcl_code values('InitialLoad',$InitialLoad)}
