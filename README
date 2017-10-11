@@ -1,0 +1,70 @@
+NUT nutrition software
+Copyright (C) 1996-2014 by Jim Jozwiak.
+
+   NUT is nutrition software to record what you eat and analyze your meals for
+   nutrient composition.  Besides the usual features of nutrition software, NUT
+   includes a novel automatic portion control feature that allows you to plan
+   nutritious meals when experimenting with different calorie levels, different
+   levels of protein, carbohydate, and fat, and different food exclusions.  NUT
+   also offers a well-organized presentation of the nutrients that can help you
+   learn human nutrition by simply playing with the software.
+
+   The advantage of using NUTsqlite is that the database is portable across
+   disparate operating systems and can be queried independently of the NUTsqlite
+   application by using common SQLite tools.  The exact code that runs the
+   application is in the database itself, so there is no version incompatibility
+   if you move the database to a different system or decide to update the USDA
+   tables.  And unlike the legacy implementation of NUT, NUTsqlite preserves
+   enough of the previous USDA databases to always retain referential integrity
+   among the relational tables such as in the case where the USDA deletes a food
+   that you ate in some earlier meal.
+
+INSTALLATION of NUTsqlite
+
+1) Determine if you have Tcl available.  If not, check www.activestate.com for
+   free (community) versions of Tcl available for desktop operating systems.
+
+2) Download and unzip the full ascii version of the USDA Nutrient Database in
+   the same directory where you unzipped the NUTsqlite files "nut.tcl" and
+   "updateNUT.tcl".  The NUT homepage at http://nut.sourceforge.net will have
+   the USDA zipfile you need or you can get it from the USDA.  The procedure
+   will be the same when the USDA releases a new database and you want to
+   upgrade your NUTsqlite database while preserving your personal data.
+
+3) Run "updateNUT.tcl" to create or upgrade the NUT code in the SQLite database
+   that runs the application.  If upgrading, you have to be in the same
+   directory as the "nut.sqlite" file.  After this step, "updateNUT.tcl" is not
+   required for anything and can be deleted.  Unlike the legacy implementation
+   of NUT, updating the NUT code is independent of updating the USDA database,
+   although it is certainly possible that the USDA could change the format of
+   their tables so that a later version of "updateNUT.tcl" would be required in
+   order to read their tables or display new nutrients.  The main idea is that
+   your personal data is permanent even though the application code and USDA
+   tables can change as necessary.
+
+4) Run "nut.tcl" to run NUT.  First, NUT will load the USDA files and any legacy
+   files that exist in your .nutdb directory, including all your meals if you
+   have just run the legacy NUT console program which dumps meals in a manner
+   that can be read from Tcl.  After NUT performs the initial database load,
+   the USDA files can be deleted and NUT will not load any more files until it
+   detects a new USDA database in the directory from which NUT is running.  All
+   "nut.tcl" really does is to start Tcl and cause Tcl to run the code in the
+   SQLite database.  Because the code in the database does not have to be
+   interpreted until required, there may also be better performance from the
+   application.
+
+5) If you prefer NUTsqlite to the legacy implementation, the directory ".nutdb"
+   can be deleted so it will not be loaded again when you next wish to update
+   the USDA database.  Alternately, you can simply modify line 26 of "nut.tcl"
+   to look for some non-existent directory as the legacy directory.  Another
+   easy change to "nut.tcl" is the location of the SQLite database file.  There
+   is also a variable "appSize" that can control the size of the window and
+   fonts when set between 0.7 and 1.3; however, since this can provoke a bug in
+   Tk, it can be turned off by setting appSize to 0.0, and then the program will
+   best be viewed at 800x600 or 1024x768 screen resolutions because otherwise it
+   will always be too small or too big.
+
+
+Jim Jozwiak
+http://nut.sourceforge.net
+jozwiak@gmail.com, av832@lafn.org
