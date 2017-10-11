@@ -1,3 +1,8 @@
+2016-05-08 NUTsqlite-1.9.8 released.
+
+2016-05-07 Mac user showed me illegible screens because Mac OS does not honor
+           themed widgets.  Made Mac and Windows gui (appSize = 0.0) monochrome.
+
 2016-03-18 NUTsqlite-1.9.7 released.
 
 2016-03-02 Changed calorie auto-set feature to immediately end cycle if fat

@@ -91,66 +91,66 @@ get_procs_from_db
 
 trace add variable ::FIRSTMEALam write SetMealRange_am
 trace add variable ::LASTMEALam write SetMealRange_am
-ttk::style configure nutbutton.TButton -background "#FFFF00"
-ttk::style configure recipe.TButton -background "#7FBF00"
-ttk::style configure meal.TButton -background "#FF7F00"
-ttk::style configure lightmeal.TButton -background "#FF9428"
-ttk::style configure meal.TRadiobutton -background "#FF7F00"
-ttk::style configure ar.TRadiobutton -background "#7FBF00"
-ttk::style configure po.TButton -background "#5454FF" -foreground "#FFFF00"
-ttk::style configure po.red.TButton -background "#5454FF" -foreground "#FF0000"
-ttk::style configure po.TCheckbutton -background "#5454FF" -foreground "#FFFF00"
-ttk::style map po.TCheckbutton -foreground { active "#000000" }
-ttk::style map po.TButton -foreground { active "#000000" }
-ttk::style map po.red.TButton -foreground { active "#FF0000" }
-ttk::style map po.TCheckbutton -indicatorcolor { selected "#FF0000" }
-ttk::style configure ts.TCheckbutton -background "#00FF00" -foreground "#000000"
-ttk::style map ts.TCheckbutton -foreground { active "#000000" }
-ttk::style map ts.TCheckbutton -background { active "#00FF00" }
-ttk::style map ts.TCheckbutton -indicatorcolor { selected "#FF0000" }
-ttk::style map meal.TRadiobutton -indicatorcolor { selected "#FF0000" }
-ttk::style map ar.TRadiobutton -indicatorcolor { selected "#FF0000" }
-ttk::style configure vf.TButton -background "#00FF00"
-ttk::style configure am.TFrame -background "#00FFFF"
-ttk::style configure rm.TFrame -background "#FF7F00"
-ttk::style configure vf.TFrame -background "#00FF00"
-ttk::style configure po.TFrame -background "#5454FF"
-ttk::style configure ts.TFrame -background "#FFFF00"
-ttk::style configure ar.TFrame -background "#7FBF00"
-ttk::style configure am.TLabel -background "#00FFFF"
-ttk::style configure rm.TLabel -background "#FF7F00"
-ttk::style configure ar.TLabel -background "#7FBF00"
-ttk::style configure vf.TLabel -background "#00FF00"
-ttk::style configure po.TLabel -background "#5454FF" -foreground "#FFFF00"
-ttk::style configure po.TMenubutton -background "#5454FF" -foreground "#FFFF00"
-ttk::style map po.TMenubutton -foreground { active "#000000" }
-ttk::style configure am.TNotebook -background "#00FFFF"
-ttk::style configure rm.TNotebook -background "#FF7F00"
-ttk::style configure vf.TNotebook -background "#00FF00"
-ttk::style configure ar.TNotebook -background "#7FBF00"
-ttk::style configure rm.TCombobox -background "#FF7F00"
-ttk::style configure nut.TCombobox -background "#FF7F00"
-ttk::style configure vf.TCombobox -background "#00FF00"
-ttk::style configure ts.TCombobox -background "#00FF00"
-ttk::style map po.TCombobox -fieldbackground { readonly "#FFFFFF" }
-ttk::style map rm.TCombobox -fieldbackground { readonly "#FF9428" }
-ttk::style map nut.TCombobox -fieldbackground { readonly "#FFFF00" }
-ttk::style map ts.TCombobox -fieldbackground { readonly "#00FF00" }
-ttk::style map rm.TCombobox -selectbackground { readonly "#FF9428" }
-ttk::style map nut.TCombobox -selectbackground { readonly "#FFFF00" }
-ttk::style map ts.TCombobox -selectbackground { readonly "#00FF00" }
-ttk::style map rm.TCombobox -selectforeground { readonly "#000000" }
-ttk::style map nut.TCombobox -selectforeground { readonly "#000000" }
-ttk::style map ts.TCombobox -selectforeground { readonly "#000000" }
-ttk::style map vf.TCombobox -fieldbackground { readonly "#00FF00" }
-ttk::style configure vf.TSpinbox -background "#00FF00"
-ttk::style configure am.TSpinbox -background "#00FFFF"
-ttk::style configure rm.TSpinbox -background "#FF7F00"
-ttk::style configure lf.Horizontal.TProgressbar -background "#006400"
-ttk::style configure meal.Horizontal.TProgressbar -background "#00FF00"
-ttk::style configure meal.TMenubutton -background "#FF9428"
-ttk::style configure ar.TButton -background "#BFD780"
-if {$::magnify > 0.0} {ttk::style configure nut.Treeview -font TkFixedFont -background "#00FF00" -rowheight [expr {int(round($::magnify * 15.0))}]} else {ttk::style configure nut.Treeview -font TkFixedFont -background "#00FF00"}
+ttk::style configure nutbutton.TButton 
+ttk::style configure recipe.TButton
+ttk::style configure meal.TButton
+ttk::style configure lightmeal.TButton
+ttk::style configure meal.TRadiobutton
+ttk::style configure ar.TRadiobutton
+ttk::style configure po.TButton
+ttk::style configure po.red.TButton
+ttk::style configure po.TCheckbutton
+ttk::style map po.TCheckbutton
+ttk::style map po.TButton
+ttk::style map po.red.TButton
+ttk::style map po.TCheckbutton
+ttk::style configure ts.TCheckbutton
+ttk::style map ts.TCheckbutton
+ttk::style map ts.TCheckbutton
+ttk::style map ts.TCheckbutton
+ttk::style map meal.TRadiobutton
+ttk::style map ar.TRadiobutton
+ttk::style configure vf.TButton
+ttk::style configure am.TFrame
+ttk::style configure rm.TFrame
+ttk::style configure vf.TFrame
+ttk::style configure po.TFrame
+ttk::style configure ts.TFrame
+ttk::style configure ar.TFrame
+ttk::style configure am.TLabel
+ttk::style configure rm.TLabel
+ttk::style configure ar.TLabel
+ttk::style configure vf.TLabel
+ttk::style configure po.TLabel
+ttk::style configure po.TMenubutton
+ttk::style map po.TMenubutton
+ttk::style configure am.TNotebook
+ttk::style configure rm.TNotebook
+ttk::style configure vf.TNotebook
+ttk::style configure ar.TNotebook
+ttk::style configure rm.TCombobox
+ttk::style configure nut.TCombobox
+ttk::style configure vf.TCombobox
+ttk::style configure ts.TCombobox
+ttk::style map po.TCombobox
+ttk::style map rm.TCombobox
+ttk::style map nut.TCombobox
+ttk::style map ts.TCombobox
+ttk::style map rm.TCombobox
+ttk::style map nut.TCombobox
+ttk::style map ts.TCombobox
+ttk::style map rm.TCombobox
+ttk::style map nut.TCombobox
+ttk::style map ts.TCombobox
+ttk::style map vf.TCombobox
+ttk::style configure vf.TSpinbox
+ttk::style configure am.TSpinbox
+ttk::style configure rm.TSpinbox
+ttk::style configure lf.Horizontal.TProgressbar
+ttk::style configure meal.Horizontal.TProgressbar
+ttk::style configure meal.TMenubutton
+ttk::style configure ar.TButton
+if {$::magnify > 0.0} {ttk::style configure nut.Treeview -font TkFixedFont -rowheight [expr {int(round($::magnify * 15.0))}]} else {ttk::style configure nut.Treeview -font TkFixedFont}
 
 grid [ttk::notebook .nut]
 ttk::frame .nut.am -padding [expr {$::magnify * 2}] -style "am.TFrame"
@@ -7848,7 +7848,7 @@ if {[dbmem eval {select count(*) from options}] == 0} {
 }
 
 db eval {BEGIN}
-db eval {insert or replace into version values('NUTsqlite 1.9.7',NULL)}
+db eval {insert or replace into version values('NUTsqlite 1.9.8',NULL)}
 db eval {delete from tcl_code}
 db eval {insert or replace into tcl_code values('Main',$Main)}
 db eval {insert or replace into tcl_code values('InitialLoad',$InitialLoad)}
