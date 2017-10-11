@@ -239,6 +239,11 @@ bind .nut.rm.fsentry <FocusIn> FoodSearchrm
 grid remove .nut.rm.frlistbox
 grid [ttk::label .nut.vf.label -textvariable Long_Desc -style vf.TLabel -wraplength [expr {$::magnify * 250}]] -row 0 -column 3 -columnspan 9 -rowspan 3
 
+set gramsvf 0
+set ouncesvf 0
+set caloriesvf 0
+set Amountvf 0
+
 grid [tk::spinbox .nut.vf.sb0 -width 5 -justify right -from -9999 -to 9999 -increment 1 -textvariable gramsvf -buttonbackground "#00FF00"] -row 0 -column 0 -columnspan 2 -sticky e
 grid [tk::spinbox .nut.vf.sb1 -width 5 -justify right -from -999 -to 999 -increment 0.1 -textvariable ouncesvf -buttonbackground "#00FF00"] -row 1 -column 0 -columnspan 2 -sticky e
 grid [tk::spinbox .nut.vf.sb2 -width 5 -justify right -from -9999 -to 9999 -increment 1 -textvariable caloriesvf -buttonbackground "#00FF00"] -row 2 -column 0 -columnspan 2 -sticky e
@@ -404,7 +409,7 @@ pack [ttk::label .nut.qn.label -text "NUT has ended."]
 bind .nut <<NotebookTabChanged>> NutTabChange
 grid [ttk::frame .nut.vf.frlistbox -style vf.TFrame -width [expr {15 * $::column15}] ] -row 5 -rowspan 16 -column 0 -columnspan 15 -sticky nsew
 grid propagate .nut.vf.frlistbox 0
-grid [tk::listbox .nut.vf.frlistbox.listbox -width 85 -height 22 -listvariable foodsvf -yscrollcommand ".nut.vf.frlistbox.scrollv set" -xscrollcommand ".nut.vf.frlistbox.scrollh set" -background green -setgrid 1] -row 0 -column 0 -sticky nsew
+grid [tk::listbox .nut.vf.frlistbox.listbox -width 85 -height 22 -listvariable foodsvf -yscrollcommand ".nut.vf.frlistbox.scrollv set" -xscrollcommand ".nut.vf.frlistbox.scrollh set" -background "#00FF00" -setgrid 1] -row 0 -column 0 -sticky nsew
 grid [scrollbar .nut.vf.frlistbox.scrollv -width [expr {$::magnify * 5}] -relief sunken -orient vertical -command ".nut.vf.frlistbox.listbox yview"] -row 0 -column 1 -sticky nsew
 grid [scrollbar .nut.vf.frlistbox.scrollh -width [expr {$::magnify * 5}] -relief sunken -orient horizontal -command ".nut.vf.frlistbox.listbox xview"] -row 1 -column 0 -sticky nswe
 grid rowconfig .nut.vf.frlistbox 0 -weight 1 -minsize 0
@@ -5364,8 +5369,8 @@ set pbprog1 {
 
 proc pbprog1 { } {
  incr ::pbprog1counter
- if {$::pbprog1counter % 1000 == 0} {
-  set ::pbar(5) [expr {$::pbar(5) + 0.07}]
+ if {$::pbprog1counter % 250 == 0} {
+  set ::pbar(5) [expr {$::pbar(5) + 0.10}]
   update
   }
  }
@@ -5533,7 +5538,7 @@ proc changedv_vitmin {nut} {
 #end changedv_vitmin
 }
 
-db eval {insert or replace into version values('NUTsqlite 1.8',NULL)}
+db eval {insert or replace into version values('NUTsqlite 1.9.0',NULL)}
 db eval {delete from tcl_code}
 db eval {insert or replace into tcl_code values('Main',$Main)}
 db eval {insert or replace into tcl_code values('InitialLoad',$InitialLoad)}

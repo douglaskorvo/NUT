@@ -528,6 +528,15 @@ If I want to change this cycle to primarily a fat loss cycle:
 sqlite> update options set wlpolarity = 0;
 </B></PRE>   
 <P>
+Although you can update some of the 
+<B>NUT</B>
+data manually as in this example,
+do note that if you update nutrient values in the food_des
+table, your updates will not propagate to the meals table unless you reload the
+USDA nutrient database, this as a consequence of the table joins done at load time to
+improve performance at
+runtime.
+<P>
 Now a question which was difficult to answer with the legacy
 <B>NUT</B>
 program but fairly easy to answer with SQL.  I was buying the most expensive

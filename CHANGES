@@ -1,3 +1,13 @@
+2014-11-07 NUTsqlite-1.9.0 released.
+
+2014-11-07 Just for laughs, I upgraded all my Tcl stuff with the ActiveTcl distribution.
+           There were a few changes in the appearance of the gui which I fixed in such
+           a manner that earlier versions of Tcl shouldn't notice:  a literal green 
+           on food search became an illegible darkGreen so I specified it using rgb
+           notation, and some zeros at the top of view foods became negative zeros so I
+           explicitly set them to zero before the spinbuttons create themselves.  Also,
+           the "Load Nutrient Values" progress bar needed to be retimed.
+
 2014-10-30 NUTsqlite-1.8 released.
 
 2014-10-30 Another problem with recipes:  traces on variables to allow modifications of

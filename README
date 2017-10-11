@@ -33,25 +33,28 @@ INSTALLATION of NUTsqlite
 
 3) Run "updateNUT.tcl" to create or upgrade the NUT code in the SQLite database
    that runs the application.  If upgrading, you have to be in the same
-   directory as the "nut.sqlite" file.  After this step, "updateNUT.tcl" is not
-   required for anything and can be deleted.  Unlike the legacy implementation
-   of NUT, updating the NUT code is independent of updating the USDA database,
-   although it is certainly possible that the USDA could change the format of
-   their tables so that a later version of "updateNUT.tcl" would be required in
-   order to read their tables or display new nutrients.  The main idea is that
-   your personal data is permanent even though the application code and USDA
-   tables can change as necessary.
+   directory as the "nut.sqlite" file, or else you have to modify
+   "updateNUT.tcl" on line 24 to provide the full path to the "nut.sqlite" file.
+   After this step, "updateNUT.tcl" is not required for anything and can be
+   deleted.  Unlike the legacy implementation of NUT, updating the NUT code is
+   independent of updating the USDA database, although it is certainly possible
+   that the USDA could change the format of their tables so that a later version
+   of "updateNUT.tcl" would be required in order to read their tables or display
+   new nutrients.  The main idea is that your personal data is permanent even
+   though the application code and USDA tables can change as necessary.
 
-4) Run "nut.tcl" to run NUT.  First, NUT will load the USDA files and any legacy
-   files that exist in your .nutdb directory, including all your meals if you
-   have just run the legacy NUT console program which dumps meals in a manner
-   that can be read from Tcl.  After NUT performs the initial database load,
-   the USDA files can be deleted and NUT will not load any more files until it
-   detects a new USDA database in the directory from which NUT is running.  All
-   "nut.tcl" really does is to start Tcl and cause Tcl to run the code in the
-   SQLite database.  Because the code in the database does not have to be
-   interpreted until required, there may also be better performance from the
-   application.
+4) Run "nut.tcl" to run NUT.  If you are using a launcher and cannot specify the
+   working directory, you will have to modify "nut.tcl" on line 27 to specify
+   the full path to "nut.sqlite".  When "nut.tcl" runs initially, it will load
+   the USDA files and any legacy files that exist in your .nutdb directory,
+   including all your meals if you have just run the legacy NUT console program
+   which dumps meals in a manner that can be read from Tcl.  After NUT performs
+   the initial database load, the USDA files can be deleted and NUT will not
+   load any more files until it detects a new USDA database in the directory
+   from which NUT is running.  All "nut.tcl" really does is to start Tcl and
+   cause Tcl to run the code in the SQLite database.  Because the code in the
+   database does not have to be interpreted until required, there may also be
+   better performance from the application.
 
 5) If you prefer NUTsqlite to the legacy implementation, the directory ".nutdb"
    can be deleted so it will not be loaded again when you next wish to update
