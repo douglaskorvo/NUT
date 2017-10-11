@@ -1,3 +1,15 @@
+2017-06-26 NUTsqlite-1.9.9.6 released.
+
+2017-06-20 Multiple changes:  special commented-out code to make it easier to
+           modify GUI to show non-fiber carb DV percentages instead of the gram
+           weight; change to calorie auto-set algorithm to hopefully make it
+           work better to quickly home in on the right calorie level; added
+           Retinol & Glycine as Daily Value nutrients but only for PCF purposes
+           (you have to use sqlite3 directly to change the DV because there's
+           no place in the GUI to deal with it or even show the percentages,
+           and you put the value you want in the dv_default field, not the
+           nutopt field which should be 0.0).
+
 2017-05-12 NUTsqlite-1.9.9.5 released.
 
 2017-05-12 Updated email address everywhere.

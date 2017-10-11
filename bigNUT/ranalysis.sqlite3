@@ -1,0 +1,5 @@
+/*
+  This is the select that I use to look at the nutrient values for the current meal.
+*/
+
+select NutrDesc, round(Nutr_Val, 1) || ' ' || Units, cast(cast(round(100.0 + dvpct_offset) as int) as text) || '%' from rm_analysis natural join rm_dv natural join nutr_def order by dvpct_offset desc;

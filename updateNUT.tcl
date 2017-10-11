@@ -410,7 +410,7 @@ grid [scrollbar .nut.rm.frmenu.scrollv -width [expr {$::magnify * 5}] -relief su
 grid rowconfig .nut.rm.frmenu 0 -weight 1 -minsize 0
 grid columnconfig .nut.rm.frmenu 0 -weight 1 -minsize 0
 
-set ::PCFchoices {{No Auto Portion Control} {Protein} {Non-Fiber Carb} {Total Fat} {Vitamin A} {Thiamin} {Riboflavin} {Niacin} {Panto. Acid} {Vitamin B6} {Folate} {Vitamin B12} {Vitamin C} {Vitamin D} {Vitamin E} {Vitamin K1} {Calcium} {Copper} {Iron} {Magnesium} {Manganese} {Phosphorus} {Potassium} {Selenium} {Zinc} {Fiber}}
+set ::PCFchoices {{No Auto Portion Control} {Protein} {Non-Fiber Carb} {Total Fat} {Vitamin A} {Thiamin} {Riboflavin} {Niacin} {Panto. Acid} {Vitamin B6} {Folate} {Vitamin B12} {Vitamin C} {Vitamin D} {Vitamin E} {Vitamin K1} {Calcium} {Copper} {Iron} {Magnesium} {Manganese} {Phosphorus} {Potassium} {Selenium} {Zinc} {Glycine} {Retinol} {Fiber}}
 set ::rmMenu .nut.rm.frmenu
 grid remove .nut.rm.frmenu
 
@@ -489,8 +489,14 @@ foreach x {am rm vf ar} {
   }
  foreach nut {CHO_NONFIB} {
   grid [ttk::button .nut.${x}.nbw.screen${screen}.b${nut} -textvariable ::${nut}b -command "NewStory $nut $x" -style "nutbutton.TButton"] -row $row -column $bcol -columnspan 3 -sticky we
-  if {$x == "ar"} {grid [ttk::entry .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x}1 -justify right -width 8] -row $row -column $valcol -columnspan 2 -sticky e} else {grid [ttk::label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x}1 -style ${x}.TLabel] -row $row -column $valcol -columnspan 2 -sticky e}
-  grid [ttk::label .nut.${x}.nbw.screen${screen}.lu${nut} -textvariable ::${nut}u -style ${x}.TLabel] -row $row -column $ucol -sticky w
+   if {$x == "ar"} {grid [ttk::entry .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x}1 -justify right -width 8] -row $row -column $valcol -columnspan 2 -sticky e} else {grid [ttk::label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x}1 -style ${x}.TLabel] -row $row -column $valcol -columnspan 2 -sticky e}
+   grid [ttk::label .nut.${x}.nbw.screen${screen}.lu${nut} -textvariable ::${nut}u -style ${x}.TLabel] -row $row -column $ucol -sticky w
+
+#uncomment these two lines and comment out the previous two if user insists he
+#must see CHO_NONFIB percentage of DV instead of grams
+
+#   if {$x == "ar"} {grid [ttk::entry .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x}1 -justify right -width 8] -row $row -column $valcol -columnspan 2 -sticky e} else {grid [ttk::label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x}dv -style ${x}.TLabel] -row $row -column $valcol -columnspan 2 -sticky e}
+#   grid [ttk::label .nut.${x}.nbw.screen${screen}.lu${nut} -text "%" -style ${x}.TLabel] -row $row -column $ucol -sticky w
   incr row
   }
  set row 3
@@ -941,6 +947,15 @@ destroy .loadframe
 set Start_NUT {
 
 db nullvalue "\[No Data\]"
+
+#If user didn't reload USDA database, he won't pickup Retinol & Glycine change.
+#This ensures Retinol & Glycine are now DV nutrients
+
+db eval {update nutr_def set dv_default = case when (select dv_default from nutr_def where NutrDesc = 'Retinol') = 0.0 then 7.0 else dv_default end where NutrDesc = 'Retinol'}
+db eval {update nutr_def set dv_default = case when (select dv_default from nutr_def where NutrDesc = 'Glycine') = 0.0 then 7.0 else dv_default end where NutrDesc = 'Glycine'}
+
+#end of special Retinol & Glycine update
+
 db eval {select Tagname, NutrDesc, Units from nutr_def} {
  set nut $Tagname
  set ::${nut}b $NutrDesc
@@ -1682,7 +1697,7 @@ proc RefreshWeightLog {args} {
  if {($leanslope > 0.0 && $::fatslope > 0.0) || ($wlpolarity == 0 && $::fatslope > 0.0)} {set CASmode Cutting}
  set datapoints [db eval {select count(*) from wlog where cleardate is null}]
  if {$datapoints > 1} {
-  set ::wlogsummary "Based on the trend of $datapoints data points so far...\n\nPredicted lean mass today = [expr {round(10.0 * ($::weightyintercept - $::fatyintercept)) / 10.0 }]\n\nPredicted fat mass today = $::fatyintercept\n\nIf the predictions are correct, you [expr {$leanslope >= 0.0 ? "gained" : "lost"}] [expr {abs(round($leanslope * $::span * 1000.0) / 1000.0)}] lean mass over $::span [expr {$::span == 1 ? "day" : "days"}] and [expr {$::fatslope >= 0.0 ? "gained" : "lost"}] [expr {abs(round($::fatslope * $::span * 1000.0) / 1000.0)}] fat mass.\n\n[expr {$autocal == 2 ? "Calorie Auto-Set Mode = $CASmode" : ""}]"
+  set ::wlogsummary "Based on the trend of $datapoints data points so far...\n\nPredicted lean mass today = [expr {round(10.0 * ($::weightyintercept - $::fatyintercept)) / 10.0 }]\n\nPredicted fat mass today = $::fatyintercept\n\nIf the predictions are correct, you [expr {$leanslope >= 0.0 ? "gained" : "lost"}] [expr {abs(round($leanslope * $::span * 1000.0) / 1000.0)}] lean mass over $::span [expr {$::span == 1 ? "day" : "days"}] and [expr {$::fatslope >= 0.0 ? "gained" : "lost"}] [expr {abs(round($::fatslope * $::span * 1000.0) / 1000.0)}] fat mass."
   } else { set ::wlogsummary "" } 
  if {$datapoints == 1} {
   db eval {select weight as "::weightyintercept", bodyfat as "::currentbfp" from wlog where cleardate is null} { }
@@ -1700,12 +1715,12 @@ proc ClearWeightLog {args} {
 db eval {select * from wlog order by wldate desc limit 1} { }
 db eval {update wlog set cleardate = $wldate where cleardate is null}
 db eval {insert into wlog values ($weight, $bodyfat, $wldate, NULL)}
-db eval {update options set wltweak = 0}
 RefreshWeightLog
 }
 
 #end ClearWeightLog
 }
+
 set AcceptNewMeasurements {
 
 proc AcceptNewMeasurements {args} {
@@ -1713,37 +1728,27 @@ proc AcceptNewMeasurements {args} {
 set today [db eval {select strftime('%Y%m%d', 'now', 'localtime')}]
 db eval {insert into wlog values ( $::weightyintercept, $::currentbfp, $today, NULL)}
 RefreshWeightLog
-db eval {select autocal, wlpolarity, wltweak, "::weightslope", "::fatslope", "::weightslope" - "::fatslope" as leanslope, "::fatyintercept" from options, weightslope, fatslope} { }
+db eval {select autocal, "::weightslope", "::fatslope", "::weightslope" - "::fatslope" as leanslope, "::fatyintercept" from options, weightslope, fatslope} { }
 
 if {$autocal == 2} {
  if {$leanslope > 0.0 && $::fatslope > 0.0} {
   set ::ENERC_KCALopt [expr {$::ENERC_KCALopt - 20.0}]
-  db eval {update options set wltweak = 1}
-  auto_cal
-  } elseif {$leanslope < 0.0 && $::fatslope < 0.0} { 
-  set ::ENERC_KCALopt [expr {$::ENERC_KCALopt + 20.0}]
-  db eval {update options set wltweak = 1}
-  auto_cal
-  } elseif {$wlpolarity == 0 && $::fatslope > 0.0} {
-  set ::ENERC_KCALopt [expr {$::ENERC_KCALopt - 20.0}]
-  db eval {update options set wltweak = 1}
-  auto_cal
-  } elseif {$wlpolarity == 1 && $leanslope < 0.0} {
-  set ::ENERC_KCALopt [expr {$::ENERC_KCALopt + 20.0}]
-  db eval {update options set wltweak = 1}
-  auto_cal
-  } elseif {$leanslope > 0.0 && $::fatslope < 0.0 && $wltweak == 1} {
-  set firstwldate [db eval {select min(wldate) from wlog where cleardate is null}]
-  set newcalorielevel [db eval "select round(sum(ENERC_KCAL) / $::span ) from meals where meal_id / 100 >= $firstwldate and meal_id / 100 < $today"]
   db eval {update wlog set cleardate = $today where cleardate is NULL}
   set ::currentbfp [expr {round(1000.0 * $::fatyintercept / $::weightyintercept) / 10.0}]
   db eval {insert into wlog values ( $::weightyintercept, $::currentbfp, $today, NULL)}
-  db eval {update options set wltweak = 0, wlpolarity = case when wlpolarity = 1 then 0 else 1 end}
-  set ::ENERC_KCALopt $newcalorielevel
   auto_cal
+  } elseif {$leanslope < 0.0 && $::fatslope < 0.0} { 
+  set ::ENERC_KCALopt [expr {$::ENERC_KCALopt + 20.0}]
+  db eval {update wlog set cleardate = $today where cleardate is NULL}
+  set ::currentbfp [expr {round(1000.0 * $::fatyintercept / $::weightyintercept) / 10.0}]
+  db eval {insert into wlog values ( $::weightyintercept, $::currentbfp, $today, NULL)}
+  auto_cal
+  } elseif {$::fatslope > 0.0} {
+  db eval {update wlog set cleardate = $today where cleardate is NULL}
+  set ::currentbfp [expr {round(1000.0 * $::fatyintercept / $::weightyintercept) / 10.0}]
+  db eval {insert into wlog values ( $::weightyintercept, $::currentbfp, $today, NULL)}
   }
  }
-
 RefreshWeightLog
 }
 
@@ -3735,7 +3740,7 @@ set gramsvf 0
 set ouncesvf 0
 set caloriesvf 0
 set Amountvf 0
-set ::PCFchoices {{No Auto Portion Control} {Protein} {Non-Fiber Carb} {Total Fat} {Vitamin A} {Thiamin} {Riboflavin} {Niacin} {Panto. Acid} {Vitamin B6} {Folate} {Vitamin B12} {Vitamin C} {Vitamin D} {Vitamin E} {Vitamin K1} {Calcium} {Copper} {Iron} {Magnesium} {Manganese} {Phosphorus} {Potassium} {Selenium} {Zinc} {Fiber}}
+set ::PCFchoices {{No Auto Portion Control} {Protein} {Non-Fiber Carb} {Total Fat} {Vitamin A} {Thiamin} {Riboflavin} {Niacin} {Panto. Acid} {Vitamin B6} {Folate} {Vitamin B12} {Vitamin C} {Vitamin D} {Vitamin E} {Vitamin K1} {Calcium} {Copper} {Iron} {Magnesium} {Manganese} {Phosphorus} {Potassium} {Selenium} {Zinc} {Glycine} {Retinol} {Fiber}}
 set ::rmMenu .nut.rm.frmenu
 
 ttk::notebook .nut 
@@ -4165,9 +4170,19 @@ foreach x {am rm vf ar} {
   if {$x == "ar"} {
    ttk::entry .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x}1 -justify right
    } else {
-   label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x}1 -background $background($x) -anchor e
+    label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x}1 -background $background($x) -anchor e
+
+#uncomment this line and comment out the previous if user insists he
+#must see CHO_NONFIB percentage of DV instead of grams
+
+#    label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x}dv -background $background($x) -anchor e
    }
-  label .nut.${x}.nbw.screen${screen}.lu${nut} -textvariable ::${nut}u -background $background($x) -anchor w
+   label .nut.${x}.nbw.screen${screen}.lu${nut} -textvariable ::${nut}u -background $background($x) -anchor w
+
+#uncomment this line and comment out the previous if user insists he
+#must see CHO_NONFIB percentage of DV instead of grams
+
+#   label .nut.${x}.nbw.screen${screen}.lu${nut} -text "%" -background $background($x) -anchor w
   place .nut.${x}.nbw.screen${screen}.b${nut} -relx 0.665 -rely $rely -relheight 0.06 -relwidth 0.165
   place .nut.${x}.nbw.screen${screen}.l${nut} -relx 0.84 -rely $rely -relheight 0.06 -relwidth 0.1
   place .nut.${x}.nbw.screen${screen}.lu${nut} -relx 0.94 -rely $rely -relheight 0.06 -relwidth 0.055
@@ -7334,6 +7349,70 @@ proc ::VITEnew_vf {args} {
 #end ::VITEnew_vf
 }
 
+set ::GLY_Gdv_change {
+
+proc ::GLY_Gdv_change {args} {
+ }
+
+#end ::GLY_Gdv_change
+}
+
+set ::GLY_Gnew_dv {
+
+proc ::GLY_Gnew_dv {args} {
+ }
+
+#end ::GLY_Gnew_dv
+}
+
+set ::GLY_Gnew_rm {
+
+proc ::GLY_Gnew_rm {args} {
+ }
+
+#end ::GLY_Gnew_rm
+}
+
+set ::GLY_Gnew_vf {
+
+proc ::GLY_Gnew_vf {args} {
+ }
+
+#end ::GLY_Gnew_vf
+}
+
+set ::RETOLdv_change {
+
+proc ::RETOLdv_change {args} {
+ }
+
+#end ::RETOLdv_change
+}
+
+set ::RETOLnew_dv {
+
+proc ::RETOLnew_dv {args} {
+ }
+
+#end ::RETOLnew_dv
+}
+
+set ::RETOLnew_rm {
+
+proc ::RETOLnew_rm {args} {
+ }
+
+#end ::RETOLnew_rm
+}
+
+set ::RETOLnew_vf {
+
+proc ::RETOLnew_vf {args} {
+ }
+
+#end ::RETOLnew_vf
+}
+
 set load_nutr_def {
 
 proc load_nutr_def {args} {
@@ -7562,6 +7641,8 @@ dbmem eval {update nutr_def set dv_default = 4.7 where Tagname = 'LA'}
 dbmem eval {update nutr_def set dv_default = 4.0 where Tagname = 'OMEGA3'}
 dbmem eval {update nutr_def set dv_default = 4.9 where Tagname = 'OMEGA6'}
 dbmem eval {update nutr_def set dv_default = 32.6 where Tagname = 'FAMS'}
+dbmem eval {update nutr_def set dv_default = 7.0 where Tagname = 'GLY_G'}
+dbmem eval {update nutr_def set dv_default = 900.0 where Tagname = 'RETOL'}
 dbmem eval {COMMIT}
 dbmem eval {drop table ttnutr_def}
 dbmem eval {drop table tnutr_def}
@@ -7874,7 +7955,7 @@ if {[dbmem eval {select count(*) from options}] == 0} {
 }
 
 db eval {BEGIN}
-db eval {insert or replace into version values('NUTsqlite 1.9.9.5',NULL)}
+db eval {insert or replace into version values('NUTsqlite 1.9.9.6',NULL)}
 db eval {delete from tcl_code}
 db eval {insert or replace into tcl_code values('Main',$Main)}
 db eval {insert or replace into tcl_code values('InitialLoad',$InitialLoad)}
@@ -8121,6 +8202,14 @@ db eval {insert or replace into tcl_code values('::VITEdv_change',$::VITEdv_chan
 db eval {insert or replace into tcl_code values('::VITEnew_dv',$::VITEnew_dv)}
 db eval {insert or replace into tcl_code values('::VITEnew_rm',$::VITEnew_rm)}
 db eval {insert or replace into tcl_code values('::VITEnew_vf',$::VITEnew_vf)}
+db eval {insert or replace into tcl_code values('::GLY_Gdv_change',$::GLY_Gdv_change)}
+db eval {insert or replace into tcl_code values('::GLY_Gnew_dv',$::GLY_Gnew_dv)}
+db eval {insert or replace into tcl_code values('::GLY_Gnew_rm',$::GLY_Gnew_rm)}
+db eval {insert or replace into tcl_code values('::GLY_Gnew_vf',$::GLY_Gnew_vf)}
+db eval {insert or replace into tcl_code values('::RETOLdv_change',$::RETOLdv_change)}
+db eval {insert or replace into tcl_code values('::RETOLnew_dv',$::RETOLnew_dv)}
+db eval {insert or replace into tcl_code values('::RETOLnew_rm',$::RETOLnew_rm)}
+db eval {insert or replace into tcl_code values('::RETOLnew_vf',$::RETOLnew_vf)}
 db eval {insert or replace into tcl_code values('load_nutr_def',$load_nutr_def)}
 db eval {insert or replace into tcl_code values('load_fd_group',$load_fd_group)}
 db eval {insert or replace into tcl_code values('load_food_des1',$load_food_des1)}

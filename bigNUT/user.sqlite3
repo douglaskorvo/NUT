@@ -303,6 +303,7 @@ create table z_save_it (weight real, fat real, wldate integer, span integer, tod
 drop trigger if exists autocal_cutting;
 create temp trigger autocal_cutting after insert on z_wl
 when (select autocal = 2 and weightn > 1 and fatslope > 0.0 and (weightslope - fatslope) > 0.0 from z_wslope, z_fslope, options)
+-- when (select autocal = 2 and weightn > 1 and fatslope > 0.0 and (weightslope - fatslope) > 0.0 and (weightslope - fatslope) < fatslope from z_wslope, z_fslope, options)
 begin
 delete from z_save_it;
 insert into z_save_it select weightyintercept, fatyintercept, wldate, span, today from z_wslope, z_fslope, z_span, (select min(wldate) as wldate from z_wl where
@@ -344,7 +345,7 @@ end;
 
 CREATE TABLE if not exists shopping (n integer primary key, item text, store text);
 drop view if exists shopview;
-CREATE VIEW shopview as select 'Shopping List ' || group_concat(n || ': ' || item || ' (' || store || ')', ' ') from shopping;
+CREATE VIEW shopview as select 'Shopping List ' || group_concat(n || ': ' || item || ' (' || store || ')', ' ') from (select * from shopping order by store, item);
 
 /*
   A purely personal view.  max_chick is about portion control for various parts
@@ -394,8 +395,22 @@ ccals.Nutr_No = 3002 and
 fcals.Nutr_No = 3001
 group by day, NDB_No) group by day;
 
+/*
+  This is the select that I use to look at the nutrient values for the current meal.
+*/
+
+drop view if exists ranalysis;
+create view ranalysis as select NutrDesc, round(Nutr_Val, 1) || ' ' || Units, cast(cast(round(100.0 + dvpct_offset) as int) as text) || '%' from rm_analysis natural join rm_dv natural join nutr_def order by dvpct_offset desc;
+
+/*
+  This is the select that I use to look at the nutrient values for the
+  whole analysis period.
+*/
+
+drop view if exists analysis;
+create view analysis as select NutrDesc, round(Nutr_Val, 1) || ' ' || Units, cast(cast(round(100.0 + dvpct_offset) as int) as text) || '%' from am_analysis natural join am_dv natural join nutr_def order by dvpct_offset desc;
+
 commit;
 
-PRAGMA user_version = 4;
-.timer on
+PRAGMA user_version = 5;
 .prompt 'bigNUT> '

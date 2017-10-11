@@ -26,7 +26,7 @@ exec tclsh "$0" "$@"
 #
 
 set lite [file nativename ~/src/nut/nut.sqlite]
-set big [file nativename ~/src/bignut/nut.db]
+set big [file nativename ~/src/bigNUT/nut.db]
 
 package require sqlite3
 sqlite3 db $big
@@ -50,6 +50,7 @@ db eval {insert or replace into weight select * from zweight}
 db eval {drop table zweight}
 db eval {PRAGMA recursive_triggers = 1; analyze main}
 db eval {update options set defanal_am = case when (select defanal_am from lite.options) = 0 then 2147123119 else (select defanal_am from lite.options) end, currentmeal = (select lastmeal_rm from lite.options), FAPU1 = (select FAPU1 from lite.options), grams = (select grams from lite.options), wltweak = (select wltweak from lite.options), wlpolarity = (select wlpolarity from lite.options), autocal = (select autocal from lite.options)}
+db eval {delete from shopping; insert into shopping select * from lite.shopping}
 db eval {commit}
 
 db close

@@ -1,0 +1,6 @@
+/*
+  This is the select that I use to look at the nutrient values for the
+  whole analysis period.
+*/
+
+select NutrDesc, round(Nutr_Val, 1) || ' ' || Units, cast(cast(round(100.0 + dvpct_offset) as int) as text) || '%' from am_analysis natural join am_dv natural join nutr_def order by dvpct_offset desc;

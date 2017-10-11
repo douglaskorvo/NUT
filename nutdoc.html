@@ -336,7 +336,7 @@ site at
 <A HREF="http://nut.sourceforge.net/">http://nut.sourceforge.net/</A>.
 <P>
 (Following is a description of the rightmost column on the screen that concerns
-the weight log.  At some lower screen resolutions, this column is partially occluded.  However, if you move the mouse
+the weight log.  At some lower screen resolutions, this column can be partially occluded.  However, if you move the mouse
 over the imaginary line between the program settings and the weight log columns,
 there will appear a double arrow that you can click and drag to the left to
 bring the weight log column into full view.)
@@ -378,40 +378,25 @@ Calorie "Auto-Set" means that you will eat according to the calorie level that
 <B>NUT</B>
 shows and also record your weight and bodyfat percentage daily.
 <B>NUT</B>
-can then determine how best to move the calorie level to achieve gains in
-lean mass and loss of fat mass. A cycle begins when there are two weight/bodyfat data points recorded.  
+can then determine how best to move the calorie level so that gains in
+lean mass and loss of fat mass are possible. A cycle begins when there are two weight/bodyfat data points recorded.  
 <B>NUT</B>
-will move calories by a maximum of 20 calories a day during a  cycle. 
+will move calories by a maximum of 20 calories a day. 
 If both lean mass and fat mass are trending down, 
 <B>NUT</B> 
-raises calories; if both lean mass and fat mass are trending up,
+raises calories and starts a new cycle; if both lean mass and fat mass are trending up,
 <B>NUT</B>
-lowers calories.  When fat mass is trending up and lean mass is trending
+lowers calories and starts a new cycle.  When fat mass is trending up and lean mass is trending
 down, 
-<B>NUT</B> alternates between
-a cycle to prevent fat mass gain and a cycle to prevent lean mass loss.
-A cycle ends when fat mass is trending down and lean mass is trending up. (When a
-cycle begins with this favorable trend, it is allowed to continue.)
-At the end of a cycle, the average calories per day during the cycle
-becomes the new calorie level, and this  change may be more than 20 calories from the previous calorie setting.
+<B>NUT</B> starts a new cycle without changing calories.
+A cycle which begins with lean mass going up and fat mass going down is allowed to continue as long as the favorable trend prevails.  The last set of
+measurements is always retained for a quick start to the next cycle which means
+that whenever the weight log is cleared, you see  "1 data point so far..."
 <P>
 If you are not using the Calorie Auto-Set
 feature, you can clear the weight log whenever you like; the usual reason would
 be that you have started a new strategy and therefore want to see the new
-trend.   For instance, I tend to make five to seven days of measurements, check the numbers, move calories up or down as required, and then clear the weight log when I am trying to find the right calorie level for my latest experiment. The last weight log entry is always retained after clearing the weight log to enable a quicker start to the next cycle of logging.
-<P>
-So, should you use the Weight Log manually or use the Calorie Auto-Set feature?
-I think the Calorie Auto-Set feature is best when you really do have to cut
-calories and would rather delegate the responsibility to 
-<B>NUT</B>
-to avoid the psychological torture of having to cut yourself back.  
-And
-<B>NUT</B> can slowly improve your body composition without you having to
-really think about it.
-But do
-remember that you can always turn the feature off and refine your strategy if
-there is excessive hunger or other problems, or you can 
- adjust the calorie level manually to speed up or slow down the progress of the Calorie Auto-Set algorithm.
+trend.   For instance, I tend to make five to seven days of measurements, check the numbers, move calories up or down as required, and then clear the weight log when I am trying to find the right calorie level for my latest experiment. The last weight log entry is again retained after clearing the weight log to enable a quicker start to the next cycle of logging.
 <P>
 <B>THE STORY</B>
 <P>
@@ -525,16 +510,6 @@ sqlite> select wldate, round(weight - weight * bodyfat / 100, 1) as leanmass, ro
 20150619|125.3|32.3|93.0
 </B></PRE>
 <P>
-The Calorie Auto-Set feature alternates between cycles that potentially favor
-either lean mass gain or fat mass loss in the cases when fat mass is trending up
-and lean mass is trending down.  This is a switch you can manipulate, and it is
-the wlpolarity column in the table options.  "1" means favor lean mass gain, "0" means favor fat mass loss, and you would issue the command at the start
-of each Calorie Auto-Set cycle because the wlpolarity switches its state at the end of each cycle:
-<P>
-<B><PRE>
-sqlite> update options set wlpolarity = 1;
-</B></PRE>
-<P>
 Now, let's turn to a different task.  I've created a bad recipe and I want to
 delete it from the database.  First, I find the record in the food_des table and
 ask to see  "NDB_No", the primary key for foods:
@@ -561,6 +536,15 @@ from the database using the meal_date and meal number like this:
 <P>
 <B><PRE>
 sqlite> delete from mealfoods where meal_date = 20150413 and meal = 3;
+</B></PRE>
+<P>
+If the previous strategy then fails again when a meal is reloaded, it
+probably means the weight table has recorded some impossible weight.
+For instance, if you have determined there is more spinach in the meal
+than molecules in the universe, this command will fix it:
+<P>
+<B><PRE>
+sqlite> update weight set Amount = origAmount, whectograms = orighectograms where NDB_No = 11457;
 </B></PRE>
 <P>
 Although you can update some of the 
@@ -724,6 +708,15 @@ sqlite> .schema n6hufacalc
 CREATE VIEW n6hufacalc as select meal_id, 100.0 / (1.0 + 0.0441 / (900 * SHORT6 / ENERC_KCAL) * (1.0 + (900 * SHORT3 / ENERC_KCAL) / 0.0555 + (900 * LONG3 / ENERC_KCAL) / 0.005 + (900 * (FASAT + FAMS + FAPU - SHORT6 - LONG6 - SHORT3 - LONG3) / ENERC_KCAL) / 5.0 + (900 * SHORT6 / ENERC_KCAL) / 0.175)) + 100.0 / (1.0 + 0.7 / (900 * LONG6 / ENERC_KCAL) * (1.0 + (900 * LONG3 / ENERC_KCAL) / 3.0)) as n6hufa from meals;
 sqlite> select round(avg(n6hufa)) from n6hufacalc where meal_id between 2014060000 and 2014090000;
 57.0
+</B></PRE>
+<P>
+One of the users wanted a food journal in a particular format.  It looked
+simple but the SQL was surprisingly complicated:
+<P>
+<B><PRE>
+qlite> select id || group_concat(' ' || food) from (select cast(substr(meal_date, 5, 2) as int) || '/' || cast(substr(meal_date, 7) as int) || ' ' || case when meal = 1 then 'breakfast:' when meal = 2 then 'lunch:' else 'dinner:' end as id, token1 || ' ' || case when commapos = 0 then token2 else substr(token2, 1, commapos - 1) end as food from (select meal_date, meal, token1, token2, instr(token2, ',') as commapos from (select meal_date, meal, trim(substr(Long_Desc, 1, instr(Long_Desc, ',')), ',') as token1, trim(substr(Long_Desc, instr(Long_Desc, ',')), ', ') as token2 from mealfoods natural join food_des where meal_date > 20170621))) group by id;
+6/22 breakfast: Cheese cheddar, Oil coconut, Spinach raw (Spinacia oleracea), Tomatoes red, Nuts almonds, Beverages coffee, Fish sardine, Snacks pork skins, Cocoa dry powder, Oil flaxseed, Egg yolk, Chicken liver, Mushrooms brown, Artichokes (globe or french), Pork fresh, Beef ground
+6/22 lunch: Cheese cheddar, Oil coconut, Brussels sprouts raw (Brassica oleracea (Gemmifera Group)), Spinach raw (Spinacia oleracea), Tomatoes red, Nuts almonds, Beverages coffee, Snacks pork skins, Cocoa dry powder, Oil flaxseed, Egg yolk, Chicken liver, Mushrooms brown, Pork fresh, Chicken broilers or fryers, Beef ground
 </B></PRE>
 <P>
 The next query concerns how non-fiber carb has varied in my diet, but I

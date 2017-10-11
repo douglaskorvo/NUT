@@ -1,0 +1,40 @@
+/*
+  Custom script to add next day's meals automatically.  Invoke it thus:
+	.read nextday.sqlite3
+*/
+
+begin;
+drop table if exists meal_add_list;
+create temp table meal_add_list (n integer primary key, meal_id integer, meal_name text);
+with meallist as (
+ with idbase as (
+  with nextday as (
+   with formattedld as (
+    with lastday as (select max(meal_id) / 100 from mealfoods)
+    select
+    substr( (select * from lastday), 1, 4 ) || '-' ||
+    substr( (select * from lastday), 5, 2 ) || '-' ||
+    substr( (select * from lastday), 7, 2 )
+    )
+   select date( (select * from formattedld), '+1 day')
+   )
+  select
+  substr( (select * from nextday), 1, 4 ) ||
+  substr( (select * from nextday), 6, 2 ) ||
+  substr( (select * from nextday), 9, 2 )
+  )
+ select (select * from idbase) * 100 + 1, 'BC' union
+ select (select * from idbase) * 100 + 2, 'DC' union
+ select (select * from idbase) * 100 + 3, 'SC'
+ )
+insert into meal_add_list select null, * from meallist;
+
+update options set currentmeal = (select meal_id from meal_add_list where n = 1);
+insert into currentmeal select NDB_No, Gm_Wgt, NutrDesc from theusual where meal_name = (select meal_name from meal_add_list where n = 1);
+update options set currentmeal = (select meal_id from meal_add_list where n = 2);
+insert into currentmeal select NDB_No, Gm_Wgt, NutrDesc from theusual where meal_name = (select meal_name from meal_add_list where n = 2);
+update options set currentmeal = (select meal_id from meal_add_list where n = 3);
+insert into currentmeal select NDB_No, Gm_Wgt, NutrDesc from theusual where meal_name = (select meal_name from meal_add_list where n = 3);
+
+drop table meal_add_list;
+commit;

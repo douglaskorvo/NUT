@@ -289,7 +289,7 @@ end;
 
 drop trigger if exists currentmeal_trigger;
 CREATE TRIGGER currentmeal_trigger after update of currentmeal on options begin 
-update mealfoods set Nutr_No = null;
+update mealfoods set Nutr_No = null where Nutr_No is not null;
 update z_trig_ctl set am_analysis_header = 1;
 update z_trig_ctl set am_analysis_minus_currentmeal = case when (select mealcount from am_analysis_header) > 1 then 1 when (select mealcount from am_analysis_header) = 1 and (select lastmeal from am_analysis_header) != (select currentmeal from am_analysis_header) then 1 else 0 end;
 update z_trig_ctl set am_analysis_null = case when (select mealcount from am_analysis_header) > 1 then 0 when (select mealcount from am_analysis_header) = 1 and (select lastmeal from am_analysis_header) != (select currentmeal from am_analysis_header) then 0 else 1 end;
@@ -364,7 +364,7 @@ end;
   
 drop trigger if exists delete_mealfoods_trigger;
 CREATE TRIGGER delete_mealfoods_trigger after delete on mealfoods when OLD.meal_id = (select currentmeal from options) and (select count(*) from mealfoods where meal_id = OLD.meal_id) = 0 begin 
-update mealfoods set Nutr_No = null;
+update mealfoods set Nutr_No = null where Nutr_No is not null;
 update z_trig_ctl set am_analysis_header = 1;
 update z_trig_ctl set am_analysis_minus_currentmeal = case when (select mealcount from am_analysis_header) > 1 then 1 when (select mealcount from am_analysis_header) = 1 and (select lastmeal from am_analysis_header) != (select currentmeal from am_analysis_header) then 1 else 0 end;
 update z_trig_ctl set am_analysis_null = case when (select mealcount from am_analysis_header) > 1 then 0 when (select mealcount from am_analysis_header) = 1 and (select lastmeal from am_analysis_header) != (select currentmeal from am_analysis_header) then 0 else 1 end;
@@ -474,8 +474,10 @@ when (select weightn from z_wslope) = 1 then
 'Bodyfat:  ' || (select bodyfat from z_wl where cleardate is null) || '%'
 else 
 'Weight:  0.0' || char(13) || char(10) || 
-'Bodyfat:  0.0%' 
-end 
+'Bodyfat:  0.0%'
+end || char(13) || char(10) ||
+'Today' || "'" || 's Calorie level = ' || (select cast(round(nutopt) as int) from nutr_def where Nutr_No = 208)
+|| char(13) || char(10)
 || char(13) || char(10) ||
 case when (select weightn from z_wslope) = 0 then '0 data points so far...' 
 when (select weightn from z_wslope) = 1 then '1 data point so far...' 
@@ -492,9 +494,8 @@ case when (select weightslope - fatslope from z_wslope, z_fslope) >= 0.0 then 'g
 (select span from z_span) || 
 case when (select span from z_span) = 1 then ' day' else ' days' end || char(13) || char(10) ||
 case when (select fatslope from z_fslope) >= 0.0 then 'and gained ' else 'and lost ' end ||
-(select cast(abs(round(fatslope * span * 1000.0) / 1000.0) as text) from z_fslope, z_span) || ' fat mass.' ||
-char(13) || char(10) || 'Today' || "'" || 's Calorie level = ' || (select cast(round(nutopt) as int) from nutr_def where Nutr_No = 208)
-else '' end
+(select cast(abs(round(fatslope * span * 1000.0) / 1000.0) as text) from z_fslope, z_span) || ' fat mass.'
+
 end
 as verbiage;
 
@@ -519,6 +520,8 @@ end;
   that indicates if calorie level has been "tweaked" and wlpolarity, a boolean
   that bounces between true and false to balance bias between fat mass loss
   and lean mass gain.
+
+  Note:  These bools are not operative in the current version of autocl.
 */
 
 drop trigger if exists autocal_initialization;
