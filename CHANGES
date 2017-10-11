@@ -1,3 +1,11 @@
+2016-10-22 NUTsqlite-1.9.9.3 released.
+
+2016-09-26 Changed AcceptNewMeasurements to return calorie auto-set feature to
+           way it was originally, because it worked better to preserve lean
+           mass.  However, now an auto-set cycle ends with a reset of calories
+           to the average during the cycle in order to damp down big
+           oscillations.
+
 2016-08-16 NUTsqlite-1.9.9.2 released.
 
 2016-08-16 Line 2128 in proc PCF has the constant that controls the accuracy of

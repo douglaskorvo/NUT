@@ -379,19 +379,21 @@ Calorie "Auto-Set" means that you will eat according to the calorie level that
 shows and also record your weight and bodyfat percentage daily.
 <B>NUT</B>
 can then determine how best to move the calorie level to achieve gains in
-lean mass and loss of fat mass.  
+lean mass and loss of fat mass. A cycle begins when there are two weight/bodyfat data points recorded.  
 <B>NUT</B>
-will move calories by a maximum of 20 calories a day.
+will move calories by a maximum of 20 calories a day during a  cycle. 
 If both lean mass and fat mass are trending down, 
 <B>NUT</B> 
-thinks you are underfed and raises calories and clears the weight log down to one entry; if fat mass is trending up faster than lean mass,
+raises calories; if both lean mass and fat mass are trending up,
 <B>NUT</B>
-thinks you are overfed and 
-lowers calories and likewise clears the weight log.
-When lean mass is trending up faster than
-fat mass,
-this favorable trend is allowed to continue for as long as it lasts
-with no calorie change, and a report is given of fat mass change and lean mass gain.
+lowers calories.  When fat mass is trending up and lean mass is trending
+down, 
+<B>NUT</B> alternates between
+a cycle to prevent fat mass gain and a cycle to prevent lean mass loss.
+A cycle ends when fat mass is trending down and lean mass is trending up. (When a
+cycle begins with this favorable trend, it is allowed to continue.)
+At the end of a cycle, the average calories per day during the cycle
+becomes the new calorie level, and this  change may be more than 20 calories from the previous calorie setting.
 <P>
 If you are not using the Calorie Auto-Set
 feature, you can clear the weight log whenever you like; the usual reason would
@@ -408,7 +410,8 @@ And
 really think about it.
 But do
 remember that you can always turn the feature off and refine your strategy if
-there is excessive hunger or other problems.
+there is excessive hunger or other problems, or you can 
+ adjust the calorie level manually to speed up or slow down the progress of the Calorie Auto-Set algorithm.
 <P>
 <B>THE STORY</B>
 <P>
@@ -520,6 +523,16 @@ sqlite> select wldate, round(weight - weight * bodyfat / 100, 1) as leanmass, ro
 20150617|124.2|32.4|91.8
 20150618|124.8|32.8|92.0
 20150619|125.3|32.3|93.0
+</B></PRE>
+<P>
+The Calorie Auto-Set feature alternates between cycles that potentially favor
+either lean mass gain or fat mass loss in the cases when fat mass is trending up
+and lean mass is trending down.  This is a switch you can manipulate, and it is
+the wlpolarity column in the table options.  "1" means favor lean mass gain, "0" means favor fat mass loss, and you would issue the command at the start
+of each Calorie Auto-Set cycle because the wlpolarity switches its state at the end of each cycle:
+<P>
+<B><PRE>
+sqlite> update options set wlpolarity = 1;
 </B></PRE>
 <P>
 Now, let's turn to a different task.  I've created a bad recipe and I want to

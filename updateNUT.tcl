@@ -1627,7 +1627,7 @@ set RefreshWeightLog {
 
 proc RefreshWeightLog {args} {
  db eval {select *, "::weightslope" - "::fatslope" as leanslope from weightslope, fatslope} { }
- db eval {select autocal, wltweak from options} { }
+ db eval {select autocal, wlpolarity, wltweak from options} { }
  if {$autocal == 2} {
   if {!$::ALTGUI} {
    grid remove .nut.po.pane.wlogframe.clear
@@ -1667,9 +1667,11 @@ proc RefreshWeightLog {args} {
   set ::currentbfp 0.0
   }
  set ::span [db eval { select abs(min(cast (julianday(substr(wldate,1,4) || '-' || substr(wldate,5,2) || '-' || substr(wldate,7,2)) - julianday('now', 'localtime') as int))) from wlog where cleardate is null } ]
+ set CASmode Bulking
+ if {($leanslope > 0.0 && $::fatslope > 0.0) || ($wlpolarity == 0 && $::fatslope > 0.0)} {set CASmode Cutting}
  set datapoints [db eval {select count(*) from wlog where cleardate is null}]
  if {$datapoints > 1} {
-  set ::wlogsummary "Based on the trend of $datapoints data points so far...\n\nPredicted lean mass today = [expr {round(10.0 * ($::weightyintercept - $::fatyintercept)) / 10.0 }]\n\nPredicted fat mass today = $::fatyintercept\n\nIf the predictions are correct, you [expr {$leanslope >= 0.0 ? "gained" : "lost"}] [expr {abs(round($leanslope * $::span * 1000.0) / 1000.0)}] lean mass over $::span [expr {$::span == 1 ? "day" : "days"}] and [expr {$::fatslope >= 0.0 ? "gained" : "lost"}] [expr {abs(round($::fatslope * $::span * 1000.0) / 1000.0)}] fat mass."
+  set ::wlogsummary "Based on the trend of $datapoints data points so far...\n\nPredicted lean mass today = [expr {round(10.0 * ($::weightyintercept - $::fatyintercept)) / 10.0 }]\n\nPredicted fat mass today = $::fatyintercept\n\nIf the predictions are correct, you [expr {$leanslope >= 0.0 ? "gained" : "lost"}] [expr {abs(round($leanslope * $::span * 1000.0) / 1000.0)}] lean mass over $::span [expr {$::span == 1 ? "day" : "days"}] and [expr {$::fatslope >= 0.0 ? "gained" : "lost"}] [expr {abs(round($::fatslope * $::span * 1000.0) / 1000.0)}] fat mass.\n\n[expr {$autocal == 2 ? "Calorie Auto-Set Mode = $CASmode" : ""}]"
   } else { set ::wlogsummary "" } 
  if {$datapoints == 1} {
   db eval {select weight as "::weightyintercept", bodyfat as "::currentbfp" from wlog where cleardate is null} { }
@@ -1700,20 +1702,33 @@ proc AcceptNewMeasurements {args} {
 set today [db eval {select strftime('%Y%m%d', 'now', 'localtime')}]
 db eval {insert into wlog values ( $::weightyintercept, $::currentbfp, $today, NULL)}
 RefreshWeightLog
-db eval {select autocal, wlpolarity, "::weightslope", "::fatslope", "::weightslope" - "::fatslope" as leanslope, "::fatyintercept" from options, weightslope, fatslope} { }
+db eval {select autocal, wlpolarity, wltweak, "::weightslope", "::fatslope", "::weightslope" - "::fatslope" as leanslope, "::fatyintercept" from options, weightslope, fatslope} { }
 
 if {$autocal == 2} {
- if {$::fatslope > 0.0 && $::fatslope > $leanslope} {
+ if {$leanslope > 0.0 && $::fatslope > 0.0} {
   set ::ENERC_KCALopt [expr {$::ENERC_KCALopt - 20.0}]
-  db eval {update wlog set cleardate = $today where cleardate is NULL}
-  set ::currentbfp [expr {round(1000.0 * $::fatyintercept / $::weightyintercept) / 10.0}]
-  db eval {insert into wlog values ( $::weightyintercept, $::currentbfp, $today, NULL)}
+  db eval {update options set wltweak = 1}
   auto_cal
   } elseif {$leanslope < 0.0 && $::fatslope < 0.0} { 
   set ::ENERC_KCALopt [expr {$::ENERC_KCALopt + 20.0}]
+  db eval {update options set wltweak = 1}
+  auto_cal
+  } elseif {$wlpolarity == 0 && $::fatslope > 0.0} {
+  set ::ENERC_KCALopt [expr {$::ENERC_KCALopt - 20.0}]
+  db eval {update options set wltweak = 1}
+  auto_cal
+  } elseif {$wlpolarity == 1 && $leanslope < 0.0} {
+  set ::ENERC_KCALopt [expr {$::ENERC_KCALopt + 20.0}]
+  db eval {update options set wltweak = 1}
+  auto_cal
+  } elseif {$leanslope > 0.0 && $::fatslope < 0.0 && $wltweak == 1} {
+  set firstwldate [db eval {select min(wldate) from wlog where cleardate is null}]
+  set newcalorielevel [db eval "select round(sum(ENERC_KCAL) / $::span ) from meals where meal_id / 100 >= $firstwldate and meal_id / 100 < $today"]
   db eval {update wlog set cleardate = $today where cleardate is NULL}
   set ::currentbfp [expr {round(1000.0 * $::fatyintercept / $::weightyintercept) / 10.0}]
   db eval {insert into wlog values ( $::weightyintercept, $::currentbfp, $today, NULL)}
+  db eval {update options set wltweak = 0, wlpolarity = case when wlpolarity = 1 then 0 else 1 end}
+  set ::ENERC_KCALopt $newcalorielevel
   auto_cal
   }
  }
@@ -7848,7 +7863,7 @@ if {[dbmem eval {select count(*) from options}] == 0} {
 }
 
 db eval {BEGIN}
-db eval {insert or replace into version values('NUTsqlite 1.9.9.2',NULL)}
+db eval {insert or replace into version values('NUTsqlite 1.9.9.3',NULL)}
 db eval {delete from tcl_code}
 db eval {insert or replace into tcl_code values('Main',$Main)}
 db eval {insert or replace into tcl_code values('InitialLoad',$InitialLoad)}
