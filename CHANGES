@@ -1,3 +1,15 @@
+2014-09-26 NUTsqlite-1.4 released.
+
+2014-09-26 Speeded up automatic portion control by making it a single SQL
+           transaction.
+
+2014-09-26 Speeded up proc SetDefanal slightly by cancelling previous calls on
+           event loop and making shorter the time allowed for user spinbuttoning
+           until SQL processing kicks in.
+
+2014-09-25 Fixed setPCF to correctly show no portion control when it is
+           obviously impossible.
+
 2014-09-24 NUTsqlite-1.3 released.
  
 2014-09-24 In some cases when carb or fat is set in personal options to "adjust

@@ -174,6 +174,7 @@ grid [ttk::label .nut.am.meallabel -text " meals:" -style am.TLabel] -row 2 -col
 grid [ttk::label .nut.am.rangelabel -textvariable mealrange -style am.TLabel] -row 3 -column 0 -columnspan 15
 
 set ::SetDefanalPreviousValue 0
+set ::LastSetDefanal 0
 
 set ::MealfoodSequence 0
 set ::MealfoodStatus {}
@@ -4104,6 +4105,7 @@ proc PCF {seq ndb args} {
 
  if {! $::BubbleMachineStatus} {
   set ::BubbleMachineStatus 1
+  db eval {BEGIN}
   grid remove .nut.rm.fsentry
   grid .nut.rm.bubblemachine
   .nut.rm.bubblemachine start
@@ -4764,7 +4766,8 @@ proc SetDefanal {args} {
 
  if {[string equal $::meals_to_analyze_am ""]} {return}
  if {$::SetDefanalPreviousValue != $::meals_to_analyze_am} {
-  after 350 [list SetDefanalLater $::meals_to_analyze_am]
+  after cancel $::LastSetDefanal
+  set ::LastSetDefanal [after 110 [list SetDefanalLater $::meals_to_analyze_am]]
   }
  set ::SetDefanalPreviousValue $::meals_to_analyze_am
  
@@ -4906,6 +4909,7 @@ proc TurnOffTheBubbleMachine {} {
 
  set ::BubbleMachineStatus 0
  .nut.rm.bubblemachine stop
+ db eval {COMMIT}
  grid remove .nut.rm.bubblemachine
  grid .nut.rm.fsentry
  
@@ -5196,6 +5200,7 @@ proc setPCF {seqno ndb varNameSel args} {
    set saveselection $selection
    db eval {select Long_Desc from food_des where NDB_No = $ndb} { }
    ${::rmMenu}.menu.foodPCF${seqno} current 0
+   ${::rmMenu}.menu.foodPCF${seqno} configure  -style rm.TCombobox
    after idle [list badPCF $Long_Desc NULL $saveselection 0]
    return
    }
@@ -5203,6 +5208,8 @@ proc setPCF {seqno ndb varNameSel args} {
   if {$opt == -1} {
    set saveselection $selection
    set Long_Desc {}
+   ${::rmMenu}.menu.foodPCF${seqno} current 0
+   ${::rmMenu}.menu.foodPCF${seqno} configure  -style rm.TCombobox
    after idle [list badPCF $Long_Desc NULL $saveselection 2]
    return
    }
@@ -5480,7 +5487,7 @@ proc changedv_vitmin {nut} {
 #end changedv_vitmin
 }
 
-db eval {insert or replace into version values('NUTsqlite 1.3',NULL)}
+db eval {insert or replace into version values('NUTsqlite 1.4',NULL)}
 db eval {delete from tcl_code}
 db eval {insert or replace into tcl_code values('Main',$Main)}
 db eval {insert or replace into tcl_code values('InitialLoad',$InitialLoad)}

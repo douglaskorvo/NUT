@@ -516,6 +516,17 @@ associated weight records from weight:
 <B><PRE>
 sqlite> delete from food_des where NDB_No = 99008;
 sqlite> delete from weight where NDB_No = 99008;
+</B></PRE>   
+<P>
+Here's an interesting factoid about the Calorie Auto-Set feature:
+it alternates between a cycle that tries to lower fat mass and a cycle that
+tries to increase lean mass.  Which cycle are we in now?  The answer is
+the "wlpolarity" column in the "options" table.  "1" means to try to increase
+lean mass and "0" means to try to decrease fat mass.
+<P>                                   
+<B><PRE>
+sqlite> select wlpolarity from options;
+1
 sqlite> .quit
 </B></PRE>
 <P>
