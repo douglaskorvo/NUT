@@ -5202,6 +5202,7 @@ proc setPCF {seqno ndb varNameSel args} {
   set opt [db eval {select nutopt from nutr_def where NutrDesc = $selection}]
   if {$opt == -1} {
    set saveselection $selection
+   set Long_Desc {}
    after idle [list badPCF $Long_Desc NULL $saveselection 2]
    return
    }
@@ -5479,7 +5480,7 @@ proc changedv_vitmin {nut} {
 #end changedv_vitmin
 }
 
-db eval {insert or replace into version values('NUTsqlite 1.2',NULL)}
+db eval {insert or replace into version values('NUTsqlite 1.3',NULL)}
 db eval {delete from tcl_code}
 db eval {insert or replace into tcl_code values('Main',$Main)}
 db eval {insert or replace into tcl_code values('InitialLoad',$InitialLoad)}
