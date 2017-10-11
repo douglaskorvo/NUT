@@ -3339,7 +3339,7 @@ proc update_am {} {
   auto_cal
   } else {
   .nut.am.mealsb configure -from 0 -to 0
-  set $::mealrange ""
+  set ::mealrange ""
   .nut.am.meallabel configure -text " meals:"
   set ::meals_to_analyze_am 0
   db eval {select * from am_zero} { }
@@ -7848,7 +7848,7 @@ if {[dbmem eval {select count(*) from options}] == 0} {
 }
 
 db eval {BEGIN}
-db eval {insert or replace into version values('NUTsqlite 1.9.8',NULL)}
+db eval {insert or replace into version values('NUTsqlite 1.9.9.0',NULL)}
 db eval {delete from tcl_code}
 db eval {insert or replace into tcl_code values('Main',$Main)}
 db eval {insert or replace into tcl_code values('InitialLoad',$InitialLoad)}

@@ -1,3 +1,8 @@
+2016-05-12 NUTsqlite-1.9.9.0 released.
+
+2016-05-12 Fixed coding mistake in proc update_am that only manifested if user
+           changed meals per day with no meals in the database.
+
 2016-05-08 NUTsqlite-1.9.8 released.
 
 2016-05-07 Mac user showed me illegible screens because Mac OS does not honor
