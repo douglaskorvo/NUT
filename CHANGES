@@ -1,3 +1,18 @@
+2014-10-30 NUTsqlite-1.8 released.
+
+2014-10-30 Another problem with recipes:  traces on variables to allow modifications of
+           nutrient values not properly turned on in RecipeSaveAs or turned off in
+           RecipeCancel, leading to endless processing after a second recipe is attempted.
+           Fixed, hopefully.  The recipe feature was the last thing I wrote when I was
+           trying to finish the program and I think I was tired.
+
+2014-10-28 Moved SQL prepared statement cache up to the max 100.  There doesn't seem to
+           be any cost to this, and this is what I would do if I were coding in C.  Also,
+           made the RecipeSaveAs SQL a single transaction.
+
+2014-10-27 Added window icon.  It doesn't make a lot of sense since this icon is the graph
+           from the legacy version that I didn't implement in this version.
+
 2014-10-12 NUTsqlite-1.7 released.
 
 2014-10-12 Pressing a food button on "Record Meals" is not necessarily producing

@@ -22,7 +22,6 @@ exec tclsh "$0" "$@"
 package require sqlite3
 
 sqlite3 db nut.sqlite
-db timeout 10000
 
 db eval {create table if not exists tcl_code(name text primary key, code text)}
 db eval {create table if not exists version(version text primary key unique, update_cd text)}
@@ -48,6 +47,8 @@ set Main {
 
 package require Tk
 
+db cache size 100
+
 set DiskDB [file nativename $DiskDB]
 
 db eval {select max(version) as "::version" from version} { }
@@ -67,6 +68,8 @@ option add *Dialog.msg.wrapLength [expr {400 * $::magnify}]
 option add *Dialog.dtl.wrapLength [expr {400 * $::magnify}]
 
 wm title . $::version
+catch {set im [image create photo -file nuticon.gif]}
+catch {wm iconphoto . -default $im}
 bind . <Destroy> { 
  rename unknown ""
  rename _original_unknown unknown
@@ -3117,7 +3120,7 @@ if {$::mealcount == 0} {
  db eval {select FAPU1 as "::FAPU1" from options} { }
  auto_cal
  }
-InitializePersonalOptions
+after 2000 InitializePersonalOptions
 
 #end Start_NUT
 }
@@ -4212,10 +4215,12 @@ if {$foodweight <= 0.0} {
  tk_messageBox -type ok -title $::version -message "A recipe must have a weight greater than zero."
  return
  }
+db eval {BEGIN}
 db eval {insert into recipe select NULL, 9999, NULL, NULL, NULL, 0, NULL, NULL, * from meals where meal_id = $::currentmeal}
 db eval {update recipe set NDB_No = case when (select max(NDB_No) from food_des) > 98999 then (select max(NDB_No) from food_des) + 1 else 99000 end, Pro_Factor = case when ifnull(PROT_KCAL, 0.0) > 0.0 and ifnull(PROCNT, 0.0) > 0.0 then PROT_KCAL / PROCNT else 4.0 end, Fat_Factor = case when ifnull(FAT_KCAL, 0.0) > 0.0 and ifnull(FAT, 0.0) > 0.0 then FAT_KCAL / FAT else 9.0 end, CHO_Factor = case when ifnull(CHO_KCAL, 0.0) > 0.0 and ifnull(CHOCDF, 0.0) > 0.0 then CHO_KCAL / CHOCDF else 4.0 end, OMEGA6 = case when OMEGA6 is null then 0.0 else OMEGA6 end, OMEGA3 = case when OMEGA3 is null then 0.0 else OMEGA3 end, SHORT6 = case when SHORT6 is null then 0.0 else SHORT6 end, LONG6 = case when LONG6 is null then 0.0 else LONG6 end, SHORT3 = case when SHORT3 is null then 0.0 else SHORT3 end, LONG3 = case when LONG3 is null then 0.0 else LONG3 end}
 set ::RecipeWeight [db eval {select total(mhectograms) from mealfoods where meal_date =  $::currentmeal / 100 and meal = $::currentmeal % 100}]
 db eval {delete from mealfoods where meal_date = $::currentmeal / 100 and meal = $::currentmeal % 100}
+db eval {COMMIT}
 set count -1
 foreach mf $::MealfoodStatus {
  incr count
@@ -4237,15 +4242,6 @@ foreach var [info vars ::*ardv] {
  trace add variable $var write [list RecipeModdv $tag]
  }
 trace add variable ::CHO_NONFIBar1 write RecipeMod1
-trace remove variable ::PROT_KCALar write [list RecipeMod PROT_KCAL]
-trace remove variable ::FAT_KCALar write [list RecipeMod FAT_KCAL]
-trace remove variable ::CHO_KCALar write [list RecipeMod CHO_KCAL]
-trace remove variable ::SHORT6ar write [list RecipeMod SHORT6]
-trace remove variable ::LONG6ar write [list RecipeMod LONG6]
-trace remove variable ::LONG3ar write [list RecipeMod LONG3]
-trace remove variable ::SHORT3ar write [list RecipeMod SHORT3]
-trace remove variable ::FAPU1ar write [list RecipeMod FAPU1]
-trace remove variable ::ENERC_KCAL1ar write [list RecipeMod ENERC_KCAL1]
 
 set ::RecipeName {}
 set ::RecipeServNum {}
@@ -4711,6 +4707,16 @@ set ::RecipeServUnit {}
 set ::RecipeServUnitNum {}
 set ::RecipeServWeight {}
 db eval {delete from recipe}
+foreach var [info vars ::*ar] {
+ set tag [string range $var 2 end-2]
+ trace remove variable $var write [list RecipeMod $tag]
+ }
+foreach var [info vars ::*ardv] {
+ set tag [string range $var 2 end-4]
+ trace remove variable $var write [list RecipeModdv $tag]
+ }
+trace remove variable ::CHO_NONFIBar1 write RecipeMod1
+
 if {[db eval {select count(*) from mealfoods where meal_date = $::currentmeal / 100 and meal = $::currentmeal % 100}] > 0} {
  db eval {select * from rm} { }
  } else {
@@ -5527,7 +5533,7 @@ proc changedv_vitmin {nut} {
 #end changedv_vitmin
 }
 
-db eval {insert or replace into version values('NUTsqlite 1.7',NULL)}
+db eval {insert or replace into version values('NUTsqlite 1.8',NULL)}
 db eval {delete from tcl_code}
 db eval {insert or replace into tcl_code values('Main',$Main)}
 db eval {insert or replace into tcl_code values('InitialLoad',$InitialLoad)}
