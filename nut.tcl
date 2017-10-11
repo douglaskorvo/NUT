@@ -31,9 +31,9 @@ set LegacyFileDir "~/.nutdb"
 
 # appSize is a factor to create fonts and windows that match screen resolution.
 # Since some Tk features don't work right with this, 0.0 turns it off.  But,
-# sizes between 0.7 and 1.3 go between small and almost fullscreen if you can
-# deal with the bad scrolling on food lists.
-set appSize 1.0
+# sizes between approximately 0.7 and 1.3 go between small and almost
+# fullscreen if needed for legibility.
+set appSize 0.0
 
 #
 # end of easy user changes

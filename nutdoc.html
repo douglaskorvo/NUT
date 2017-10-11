@@ -87,16 +87,6 @@ will check how many pixels you have and create a font/window combination
 that is always legible.  Change the "appSize" variable in "nut.tcl"
 to between 0.7 (small) and 1.3 (almost fullscreen) to magnify the default Tk
 font and window sizes appropriately.
-Unfortunately, a bug in Tk makes scrolling
-work wrong on the food lists in the nutrient stories
-when this feature is in use, although a workaround is to
-always hold the mouse button down when
-scrolling instead of expecting a single click to move up or down by only one screen.  If the "appSize" variable in nut.tcl is set to 0.0
-to turn off the 
-<B>NUT</B>
-magnification feature, there is no
-scrolling problem,
-but Tk may come up too big or too small to be legible.
 <P>
 <B>OVERVIEW of PROGRAM</B>
 
@@ -463,13 +453,13 @@ If I need to be reminded what table I am looking for, I ask to see a list of all
 tables:
 <B><PRE>
 sqlite> .tables
-am                 food_des           recipe             vf               
-am_zero            mealfoods          rm                 vf_zero          
-archive_mealfoods  meals              rm_zero            weight           
-dv                 nut_opts           sql_statements     weightslope      
-dv_defaults        nutr_def           tcl_code           wlog             
-fatslope           options            theusual         
-fd_group           pcf                version          
+am                 fd_group           recipe             vf               
+am_zero            food_des           rm                 vf_zero          
+ar                 mealfoods          rm_zero            weight           
+archive_mealfoods  meals              sql_statements     weightslope      
+dv                 nut_opts           tcl_code           wlog             
+dv_defaults        nutr_def           theusual         
+fatslope           options            version
 </B></PRE>
 <P>
 (It should be noted that some of the views require Tcl procedures and thus can't

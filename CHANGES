@@ -1,3 +1,12 @@
+2014-10-03 NUTsqlite-1.6 released.
+
+2014-10-03 Removed redundant SQL processing from proc update_am in case where
+           user types giant number that resolves to all the meals in the db.
+
+2014-10-03 A Windows and Mac user had to set appSize to 0.0.  So I guess I will
+           distribute it set to 0.0 and make the Linux people be the ones who
+           have to edit nut.tcl to change it.
+
 2014-09-30 NUTsqlite-1.5 released.
 
 2014-09-30 Added goofy acknowledgement message after updateNUT.tcl processing.

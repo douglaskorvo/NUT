@@ -4818,7 +4818,10 @@ proc SetDefanalLater {newval} {
 
  if {$newval == $::meals_to_analyze_am} {
   if {![string is integer -strict $::meals_to_analyze_am]} { set ::meals_to_analyze_am $::defanal_am}
-  if {[string is integer -strict $::meals_to_analyze_am] && [expr {$::meals_to_analyze_am > $::mealcount}]} { set ::meals_to_analyze_am $::mealcount}
+  if {[string is integer -strict $::meals_to_analyze_am] && [expr {$::meals_to_analyze_am > $::mealcount}]} {
+   set ::meals_to_analyze_am $::mealcount
+   return
+   }
   if {$::mealcount > 0} {
    set savecursor [.nut.am cget -cursor]
    .nut.am configure -cursor watch
@@ -5523,7 +5526,7 @@ proc changedv_vitmin {nut} {
 #end changedv_vitmin
 }
 
-db eval {insert or replace into version values('NUTsqlite 1.5',NULL)}
+db eval {insert or replace into version values('NUTsqlite 1.6',NULL)}
 db eval {delete from tcl_code}
 db eval {insert or replace into tcl_code values('Main',$Main)}
 db eval {insert or replace into tcl_code values('InitialLoad',$InitialLoad)}
@@ -5604,7 +5607,7 @@ db eval {insert or replace into tcl_code values('changedv_vitmin',$changedv_vitm
 package require Tk
 
 wm geometry . 1x1
-set appSize 1.0
+set appSize 0.0
 set ::magnify [expr {[winfo vrootheight .] / 711.0}]
 if {[string is double -strict $appSize] && $appSize > 0.0} {
  set ::magnify [expr {$::magnify * $appSize}]
@@ -5623,6 +5626,6 @@ ttk::style configure lf.Horizontal.TProgressbar -background "#006400"
 
 db eval {select max(version) as "::version" from version} { }
 
-tk_messageBox -type ok -title "NUTsqlite Code Update Completion" -message "There\'s a signpost up ahead.\n\nNext stop:  ${::version}"
+tk_messageBox -type ok -title "updateNUT.tcl Completion" -message "There\'s a signpost up ahead.\n\nNext stop:  ${::version}"
 exit 0
 
