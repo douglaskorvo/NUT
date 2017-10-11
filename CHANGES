@@ -1,3 +1,9 @@
+2016-05-30 NUTsqlite-1.9.9.1 released.
+
+2016-05-16 On calorie auto-set when both fat mass and lean mass are going up,
+           and lean mass is going up faster than fat mass, treat this as a
+           favorable trend.  Change to proc AcceptNewMeasurements.
+
 2016-05-12 NUTsqlite-1.9.9.0 released.
 
 2016-05-12 Fixed coding mistake in proc update_am that only manifested if user

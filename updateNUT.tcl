@@ -1700,10 +1700,10 @@ proc AcceptNewMeasurements {args} {
 set today [db eval {select strftime('%Y%m%d', 'now', 'localtime')}]
 db eval {insert into wlog values ( $::weightyintercept, $::currentbfp, $today, NULL)}
 RefreshWeightLog
-db eval {select autocal, wltweak, "::weightslope", "::fatslope", "::weightslope" - "::fatslope" as leanslope, "::fatyintercept" from options, weightslope, fatslope} { }
+db eval {select autocal, wlpolarity, "::weightslope", "::fatslope", "::weightslope" - "::fatslope" as leanslope, "::fatyintercept" from options, weightslope, fatslope} { }
 
 if {$autocal == 2} {
- if {$::fatslope > 0.0} {
+ if {$::fatslope > 0.0 && $::fatslope > $leanslope} {
   set ::ENERC_KCALopt [expr {$::ENERC_KCALopt - 20.0}]
   db eval {update wlog set cleardate = $today where cleardate is NULL}
   set ::currentbfp [expr {round(1000.0 * $::fatyintercept / $::weightyintercept) / 10.0}]
@@ -7848,7 +7848,7 @@ if {[dbmem eval {select count(*) from options}] == 0} {
 }
 
 db eval {BEGIN}
-db eval {insert or replace into version values('NUTsqlite 1.9.9.0',NULL)}
+db eval {insert or replace into version values('NUTsqlite 1.9.9.1',NULL)}
 db eval {delete from tcl_code}
 db eval {insert or replace into tcl_code values('Main',$Main)}
 db eval {insert or replace into tcl_code values('InitialLoad',$InitialLoad)}
