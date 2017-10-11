@@ -3798,14 +3798,14 @@ ttk::entry .nut.rm.newtheusualentry -textvariable ::newtheusual
 set ::newtheusual ""
 #place .nut.rm.newtheusualentry -relx 0.31 -rely 0.12 -relheight 0.045 -relwidth 0.33
 
-button .nut.rm.newtheusualbutton -anchor center -text "Save" -command theusualNewName
+Button .nut.rm.newtheusualbutton -anchor center -text "Save" -command theusualNewName
 #place .nut.rm.newtheusualbutton -relx 0.65 -rely 0.12 -relheight 0.045 -relwidth 0.07
 
 ttk::radiobutton .nut.rm.grams -text "Grams" -width 6 -variable ::GRAMSopt -value 1 -style meal.TRadiobutton
 ttk::radiobutton .nut.rm.ounces -text "Ounces" -width 6 -variable ::GRAMSopt -value 0 -style meal.TRadiobutton
 #place .nut.rm.grams -relx 0.87 -rely 0.0046296296 -relheight 0.044444444 -relwidth 0.11
 #place .nut.rm.ounces -relx 0.87 -rely 0.0490740736 -relheight 0.044444444 -relwidth 0.11
-button .nut.rm.analysismeal -text "Analysis" -background "#FF9428" -command SwitchToAnalysis -relief raised
+Button .nut.rm.analysismeal -text "Analysis" -background "#FF9428" -command SwitchToAnalysis -relief raised
 #place .nut.rm.analysismeal -relx 0.87 -rely 0.14722222 -relheight 0.044444444 -relwidth 0.11
 
 menubutton .nut.rm.setmpd -background "#FF9428" -text "Delete All Meals and Set Meals Per Day" -relief raised -menu .nut.rm.setmpd.m
@@ -3818,7 +3818,7 @@ place .nut.rm.fsentry -relx 0.4 -rely 0.19629629  -relheight 0.044444444 -relwid
 ttk::progressbar .nut.rm.bubblemachine -style meal.Horizontal.TProgressbar -orient horizontal -mode indeterminate
 #place .nut.rm.bubblemachine -relx 0.4 -rely 0.19629629  -relheight 0.044444444 -relwidth 0.45
 
-button .nut.rm.searchcancel -text "Cancel" -width 6 -command CancelSearch -background "#00FF00"
+Button .nut.rm.searchcancel -text "Cancel" -width 6 -command CancelSearch -background "#00FF00"
 #place .nut.rm.searchcancel -relx 0.86 -rely 0.19629629  -relheight 0.044444444 -relwidth 0.09
 
 ttk::frame .nut.rm.frlistbox -style rm.TFrame
@@ -3869,7 +3869,7 @@ place .nut.vf.sbl1 -relx 0.133 -rely 0.0490740736 -relheight 0.044444444 -relwid
 place .nut.vf.sbl2 -relx 0.133 -rely 0.098148146  -relheight 0.044444444 -relwidth 0.05
 place .nut.vf.refusevalue -relx 0.133 -rely 0.19629629  -relheight 0.044444444 -relwidth 0.05
 
-button .nut.vf.meal -text "Add to Meal" -state disabled -background "#FF9428" -relief raised -command vf2rm
+Button .nut.vf.meal -text "Add to Meal" -state disabled -background "#FF9428" -relief raised -command vf2rm
 place .nut.vf.meal -relx 0.78 -rely 0.0490740736 -relheight 0.044444444 -relwidth 0.12
 ttk::label .nut.vf.fslabel -text "Food Search" -style vfright.TLabel
 place .nut.vf.fslabel -relx 0.29 -rely 0.19629629  -relheight 0.044444444 -relwidth 0.1
@@ -3913,9 +3913,9 @@ place .nut.ar.weight -relx 0.0 -rely 0.19629629 -relheight 0.044444444 -relwidth
 ttk::entry .nut.ar.weight_entry -textvariable ::RecipeServWeight
 place .nut.ar.weight_entry -relx 0.28 -rely 0.19629629 -relheight 0.044444444 -relwidth 0.1
 
-button .nut.ar.save -text "Save" -command RecipeDone -background "#00FF00"
+Button .nut.ar.save -text "Save" -command RecipeDone -background "#00FF00"
 place .nut.ar.save -relx 0.87 -rely 0.14722222 -relheight 0.044444444 -relwidth 0.11
-button .nut.ar.cancel -text "Cancel" -command RecipeCancel -background "#BFD780"
+Button .nut.ar.cancel -text "Cancel" -command RecipeCancel -background "#BFD780"
 place .nut.ar.cancel -relx 0.87 -rely 0.19629629  -relheight 0.044444444 -relwidth 0.11
 
 ttk::radiobutton .nut.ar.grams -text "Grams" -width 6 -variable ::GRAMSopt -value 1 -style ar.TRadiobutton
@@ -3940,13 +3940,13 @@ place .nut.po.pane.wlogframe.bf_l -relx 0.0 -rely 0.11 -relheight 0.04444444 -re
 tk::spinbox .nut.po.pane.wlogframe.bf_s -width 7 -justify right -from 1 -to 9999 -increment 0.1 -textvariable ::currentbfp -disabledforeground "#000000"
 place .nut.po.pane.wlogframe.bf_s -relx 0.5 -rely 0.11 -relheight 0.04444444 -relwidth 0.4
 
-button .nut.po.pane.wlogframe.accept -text "Accept New\nMeasurements" -command AcceptNewMeasurements
+Button .nut.po.pane.wlogframe.accept -text "Accept New\nMeasurements" -command AcceptNewMeasurements
 place .nut.po.pane.wlogframe.accept -relx 0.36 -rely 0.2 -relheight 0.1 -relwidth 0.55
 
 label .nut.po.pane.wlogframe.summary -wraplength [expr {$::magnify * 150}] -textvariable ::wlogsummary -justify right -anchor ne -background "#5454FF" -foreground "#FFFF00"
 place .nut.po.pane.wlogframe.summary -relx 0.0 -rely 0.34 -relheight 0.6 -relwidth 0.93
 
-button .nut.po.pane.wlogframe.clear -text "Clear Weight Log" -command ClearWeightLog
+Button .nut.po.pane.wlogframe.clear -text "Clear Weight Log" -command ClearWeightLog
 #place .nut.po.pane.wlogframe.clear -relx 0.3 -rely 0.79 -relheight 0.06 -relwidth 0.63
 
 
