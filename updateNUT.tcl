@@ -3698,15 +3698,19 @@ if {$autocal == 2} {
  if {$leanslope > 0.0 && $::fatslope > 0.0} {
   set ::ENERC_KCALopt [expr {$::ENERC_KCALopt - 20.0}]
   db eval {update options set wltweak = 1}
+  auto_cal
   } elseif {$leanslope < 0.0 && $::fatslope < 0.0} { 
   set ::ENERC_KCALopt [expr {$::ENERC_KCALopt + 20.0}]
   db eval {update options set wltweak = 1}
+  auto_cal
   } elseif {$wlpolarity == 0 && $::fatslope > 0.0} {
   set ::ENERC_KCALopt [expr {$::ENERC_KCALopt - 20.0}]
   db eval {update options set wltweak = 1}
+  auto_cal
   } elseif {$wlpolarity == 1 && $leanslope < 0.0} {
   set ::ENERC_KCALopt [expr {$::ENERC_KCALopt + 20.0}]
   db eval {update options set wltweak = 1}
+  auto_cal
   } elseif {$leanslope > 0.0 && $::fatslope < 0.0 && $wltweak == 1} {
   db eval {update wlog set cleardate = $today where cleardate is NULL}
   set ::currentbfp [expr {round(1000.0 * $::fatyintercept / $::weightyintercept) / 10.0}]
@@ -5475,7 +5479,8 @@ proc changedv_vitmin {nut} {
 #end changedv_vitmin
 }
 
-db eval {insert or replace into version values('NUTsqlite 1.0',NULL)}
+db eval {insert or replace into version values('NUTsqlite 1.1',NULL)}
+db eval {delete from tcl_code}
 db eval {insert or replace into tcl_code values('Main',$Main)}
 db eval {insert or replace into tcl_code values('InitialLoad',$InitialLoad)}
 db eval {insert or replace into tcl_code values('ComputeDerivedValues',$ComputeDerivedValues)}

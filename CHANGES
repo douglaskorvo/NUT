@@ -1,0 +1,14 @@
+2014-09-17 NUTsqlite-1.1 released.
+
+2014-09-15 Forgot that calorie change from Calorie Auto-Set will not provoke
+           auto portion control processing because calories not a PCF nutrient.
+           Added auto_cal calls if calories change in AcceptNewMeasurements.
+
+2014-09-10 AcceptNewMeasurements not working right because sql is not updating
+           global variables from the proc.  No idea why not.  Added redundant
+           call to RefreshWeightLog to update vars and it worked.  No idea why.
+
+2014-09-10 Fixed spelling errors in nutdoc.html.  Made updateNUT.tcl delete
+           from tcl_code before loading new code.
+
+2014-09-07 NUTsqlite-1.0 released.

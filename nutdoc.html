@@ -141,8 +141,7 @@ is your personal optimum.
 
 In addition, there is a facility to record weight and
 bodyfat percentages daily and see a linear extrapolation of the trend so
-that you do not have to wait weeks to know how a new b
-strategy is
+that you do not have to wait weeks to know how a new strategy is
 working.  
 <B>NUT</B> will also automatically move calories up and down by gradual increments in order to keep lean mass up and 
 fat mass down with the Calorie Auto-Set feature.
@@ -241,7 +240,7 @@ be ready to blow away the window
 running
 <B>NUT</B>
 and start over if it doesn't work. And if a Tcl error message dialog appears, just click "OK", because the error
-is a transient consequence of an upexpected set of foods that cannot be
+is a transient consequence of an unexpected set of foods that cannot be
 portion controlled to the selected specification.
 These problems will be rare occurrences as 
 <B>NUT</B>
@@ -438,12 +437,12 @@ If a food from the list looks interesting, click on it so it will open up in "Vi
 <P>
 <B>USING THE SQLITE DATABASE APART FROM NUT</B>
 <P>
-This is an advanced topic that might be expanded if I receive  questions
+This is an advanced topic that will be expanded as I receive  questions
 about it.  The SQLite3 database can be queried independently of the use of
 <B>NUT</B>
 and indeed, that is one reason I wrote this version of the software.
-However, I doubt that knowledge of SQL is  widespread, so  I will give
-a single example of a question I asked my database:  What date did I have the
+However, I doubt that knowledge of SQL is  widespread, so  first I will give
+an example of a question I asked my database:  What date did I have the
 greatest amount of lean mass and how much was it?
 <P>
 The table we will use is "wlog", and first we are curious about the schema,
@@ -500,10 +499,26 @@ Now I ask, "what was the date I had this much lean mass?"
 <B><PRE>
 sqlite> select wldate from wlog where weight - weight * bodyfat / 100 = (select max(weight - weight * bodyfat / 100) from wlog);
 20110706
+</B></PRE>
+<P>
+Now, let's turn to a different task.  I've created a bad recipe and I want to
+delete it from the database.  First, I find the record in the food_des table and
+ask to see  "NDB_No", the primary key for foods:
+<P>
+<B><PRE>
+sqlite> select NDB_No, Long_Desc from food_des where Long_Desc like '%ramen jello%';
+99008|Ramen jello toast, artisanal, with gelatin from pastured pork
+</B></PRE>
+<P>
+When I know the NDB_No, I can delete the food record from food_des and any
+associated weight records from weight:
+<P>
+<B><PRE>
+sqlite> delete from food_des where NDB_No = 99008;
+sqlite> delete from weight where NDB_No = 99008;
 sqlite> .quit
 </B></PRE>
 <P>
-
 <A NAME="lbAE">&nbsp;</A>
 <H2>FILES</H2>
 
