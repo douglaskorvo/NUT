@@ -44,6 +44,7 @@ set Main {
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+package require BWidget
 
 if {$appSize != 0.0} {
  set ::ALTGUI 1
@@ -3787,7 +3788,7 @@ menu .nut.rm.theusual.m.add -tearoff 0
 menu .nut.rm.theusual.m.save -tearoff 0
 menu .nut.rm.theusual.m.delete -tearoff 0
 
-button .nut.rm.recipebutton -background "#FF9428" -anchor center -text "Save as a Recipe" -relief raised -state disabled -command RecipeSaveAs
+Button .nut.rm.recipebutton -background "#FF9428" -anchor center -text "Save as a Recipe" -helptext "Saves as a Recipe to supplement and is searchable along with the FDA nutrition database" -relief raised -state disabled -command RecipeSaveAs
 place .nut.rm.recipebutton -relx 0.0058 -rely 0.185 -relheight 0.045 -relwidth 0.2
 
 ttk::label .nut.rm.newtheusuallabel -style rm.TLabel -text "Type new Customary Meal name and press Save" -wraplength [expr {$::magnify * 175}] -justify center
