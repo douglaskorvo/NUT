@@ -3,7 +3,7 @@
 exec tclsh "$0" "$@"
 
 # NUT nutrition software
-# Copyright (C) 1996-2014 by Jim Jozwiak.
+# Copyright (C) 1996-2015 by Jim Jozwiak.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

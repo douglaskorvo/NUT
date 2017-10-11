@@ -3,7 +3,7 @@
 exec tclsh "$0" "$@"
 
 # NUT nutrition software
-# Copyright (C) 1996-2014 by Jim Jozwiak.
+# Copyright (C) 1996-2015 by Jim Jozwiak.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ db eval {create table if not exists version(version text primary key unique, upd
 set Main {
  
 # NUT nutrition software
-# Copyright (C) 1996-2014 by Jim Jozwiak.
+# Copyright (C) 1996-2015 by Jim Jozwiak.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ set Main {
 package require Tk
 #ttk::setTheme alt
 
-db cache size 100
+#db cache size 100
 
 set DiskDB [file nativename $DiskDB]
 
@@ -4828,22 +4828,17 @@ set SetDefanalLater {
 
 proc SetDefanalLater {newval} {
 
- if {$newval == $::meals_to_analyze_am} {
-  if {![string is integer -strict $::meals_to_analyze_am]} { set ::meals_to_analyze_am $::defanal_am}
-  if {[string is integer -strict $::meals_to_analyze_am] && [expr {$::meals_to_analyze_am > $::mealcount}]} {
-   set ::meals_to_analyze_am $::mealcount
-   return
-   }
-  if {$::mealcount > 0} {
-   set savecursor [.nut.am cget -cursor]
-   .nut.am configure -cursor watch
-   update
-   db eval {update options set defanal_am = $::meals_to_analyze_am; select update_am()}
-   .nut.am configure -cursor $savecursor
-   }
+if {$newval == $::meals_to_analyze_am} {
+ if {![string is integer -strict $::meals_to_analyze_am]} { set ::meals_to_analyze_am $::defanal_am}
+ if {[string is integer -strict $::meals_to_analyze_am] && [expr {$::meals_to_analyze_am > $::mealcount}]} {
+  set ::meals_to_analyze_am $::mealcount
+  return
   }
- 
+ if {$::mealcount > 0} {
+  db eval {update options set defanal_am = $::meals_to_analyze_am; select update_am()}
+  }
  }
+}
 
 #end SetDefanalLater
 }
@@ -5542,7 +5537,7 @@ proc changedv_vitmin {nut} {
 #end changedv_vitmin
 }
 
-db eval {insert or replace into version values('NUTsqlite 1.9.1',NULL)}
+db eval {insert or replace into version values('NUTsqlite 1.9.2',NULL)}
 db eval {delete from tcl_code}
 db eval {insert or replace into tcl_code values('Main',$Main)}
 db eval {insert or replace into tcl_code values('InitialLoad',$InitialLoad)}
