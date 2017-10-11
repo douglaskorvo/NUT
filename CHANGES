@@ -1,3 +1,10 @@
+2016-08-16 NUTsqlite-1.9.9.2 released.
+
+2016-08-16 Line 2128 in proc PCF has the constant that controls the accuracy of
+           automatic portion control; however, if it is too accurate the
+           algorithm starts to loop often, which seems to be the case now, so I
+           loosened it from 0.1 to 0.2.
+
 2016-05-30 NUTsqlite-1.9.9.1 released.
 
 2016-05-16 On calorie auto-set when both fat mass and lean mass are going up,
