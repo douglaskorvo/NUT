@@ -721,7 +721,7 @@ during the summer of 2014?"
 <P>
 <B><PRE>
 sqlite> .schema n6hufacalc
-CREATE VIEW n6hufacalc as select meal_id, 100.0 / (1.0 + 0.0441 / (900 * SHORT6 / ENERC_KCAL) * (1.0 + (900 * SHORT3 / ENERC_KCAL) / 0.0555 + (900 * LONG3 / ENERC_KCAL) / 0.005 + (900 * (FASAT + FAMS + FAPU - SHORT6 - LONG6 - SHORT3 - LONG3) / ENERC_KCAL) / 5.0 + (900 * SHORT6 / ENERC_KCAL) / 0.175)) + 100.0 / (1.0 + 0.7 / (900 * LONG6 / ENERC_KCAL) * (1.0 + (900 * SHORT3 / ENERC_KCAL) / 3.0)) as n6hufa from meals;
+CREATE VIEW n6hufacalc as select meal_id, 100.0 / (1.0 + 0.0441 / (900 * SHORT6 / ENERC_KCAL) * (1.0 + (900 * SHORT3 / ENERC_KCAL) / 0.0555 + (900 * LONG3 / ENERC_KCAL) / 0.005 + (900 * (FASAT + FAMS + FAPU - SHORT6 - LONG6 - SHORT3 - LONG3) / ENERC_KCAL) / 5.0 + (900 * SHORT6 / ENERC_KCAL) / 0.175)) + 100.0 / (1.0 + 0.7 / (900 * LONG6 / ENERC_KCAL) * (1.0 + (900 * LONG3 / ENERC_KCAL) / 3.0)) as n6hufa from meals;
 sqlite> select round(avg(n6hufa)) from n6hufacalc where meal_id between 2014060000 and 2014090000;
 57.0
 </B></PRE>
@@ -820,14 +820,14 @@ nut.tcl		Tcl script to start the NUTsqlite program
 <P>
 
 <PRE>
-Jim Jozwiak (<A HREF="mailto:jozwiak@gmail.com">jozwiak@gmail.com</A>, <A HREF="mailto:av832@lafn.org">av832@lafn.org</A>)
+Jim Jozwiak (<A HREF="mailto:jozwiak@gmail.com">jozwiak@gmail.com</A>)
 <A HREF="http://nut.sourceforge.net/">http://nut.sourceforge.net/</A>
 </PRE><A NAME="lbAG">&nbsp;</A>
 <H2>COPYING</H2>
 
 <P>
 
-Copyright (C) 1996-2016 by Jim Jozwiak.
+Copyright (C) 1996-2017 by Jim Jozwiak.
 <P>
 
 <HR>

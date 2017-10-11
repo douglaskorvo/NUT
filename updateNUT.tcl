@@ -3,7 +3,7 @@
 exec tclsh "$0" "$@"
 
 # NUT nutrition software
-# Copyright (C) 1996-2016 by Jim Jozwiak.
+# Copyright (C) 1996-2017 by Jim Jozwiak.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ db eval {create table if not exists version(version text primary key unique, upd
 set Main {
  
 # NUT nutrition software
-# Copyright (C) 1996-2016 by Jim Jozwiak.
+# Copyright (C) 1996-2017 by Jim Jozwiak.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -7874,7 +7874,7 @@ if {[dbmem eval {select count(*) from options}] == 0} {
 }
 
 db eval {BEGIN}
-db eval {insert or replace into version values('NUTsqlite 1.9.9.4',NULL)}
+db eval {insert or replace into version values('NUTsqlite 1.9.9.5',NULL)}
 db eval {delete from tcl_code}
 db eval {insert or replace into tcl_code values('Main',$Main)}
 db eval {insert or replace into tcl_code values('InitialLoad',$InitialLoad)}

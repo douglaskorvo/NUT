@@ -1,3 +1,9 @@
+2017-05-12 NUTsqlite-1.9.9.5 released.
+
+2017-05-12 Updated email address everywhere.
+
+2017-05-05 Added bigNUT, the wonderful new SQL-only version of NUT.
+
 2017-02-22 NUTsqlite-1.9.9.4 released.
 
 2017-02-21 GUI not right for case when Calories are set to "adjust to my meals"
@@ -70,12 +76,12 @@
 
 2015-07-14 The original GUI works well on Windows and Mac, so it is retained if
            the appSize variable in nut.tcl is 0.0; however, on Linux when there
-           there is no resolution-independent window manager, it does not scale
-           well.  Therefore, I wrote an alternate GUI that is invoked when
-           appSize is greater than 0.0.  Some of the widgets work differently
-           due to the needs of the different geometry manager employed, but the
-           size and appearance are now more consistent over the whole range of
-           screen resolutions and "appSize" settings.
+           is no resolution-independent window manager, it does not scale well.
+           Therefore, I wrote an alternate GUI that is invoked when appSize is
+           greater than 0.0.  Some of the widgets work differently due to the
+           needs of the different geometry manager employed, but the size and
+           appearance are now more consistent over the whole range of screen
+           resolutions and "appSize" settings.
 
 2015-07-10 In proc format_meal_id there is a call to the Tcl math func "int"
            that erroneously blows up if you pass it the string "08" which it

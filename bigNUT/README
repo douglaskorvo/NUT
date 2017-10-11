@@ -1,0 +1,51 @@
+The database for NUTsqlite features denormalized tables and heavy Tcl 
+involvement to boost performance, and indeed, the performance is excellent.
+However, it is a development dead-end because, if one picks some language other
+than Tcl for a new nutrition program, the NUTsqlite database becomes useless
+because it won't work without Tcl and has to be completely recoded.
+
+The project to develop a database without Tcl wasn't getting anywhere because
+of the tedium of working on an abstract API.  I realized I needed to think of
+the project as just another version of NUT that I could use if I liked it and I
+immediately got interested.  So, now you can run NUT from the command line 
+solely using SQL--no Tcl, no GUI, no compiling, etc.
+
+This will probably not interest most users, but if you understand what
+NUTsqlite is doing and you are interested in SQL, trying to use this new
+version may be an entertaining way to teach yourself SQL.  If you are a 
+developer interested in a nutrition database, trying to use this database
+can be a painless way to learn the NUT API without doing any coding or
+attempting to fathom a lot of abstraction, and you can prune away the fluff
+to get a useful pre-written backend for your application.
+
+Here's how you do it.  You need to have sqlite3 and you need to have the 
+USDA ascii tables unzipped in your directory.  You need to edit the
+lite2big.tcl script to point to the NUTsqlite db (nut.sqlite) if you want to
+transfer your NUTsqlite personal data to the new database; otherwise you omit
+the final lite2big.tcl step from the following command sequence:
+
+sqlite3 -init load.sqlite3 nut.db
+.quit
+sqlite3 -init logic.sqlite3 nut.db
+.quit
+./lite2big.tcl
+
+You can use lite2big.tcl as often as you like, perhaps after every meal to cut
+the effort involved using the big database.  You only need the load.sqlite3 and
+logic.sqlite3 init steps when initializing or upgrading to a new USDA database.
+Neither loading nor refreshing the logic erases or changes your personal data.
+To use the database all other times, type:
+
+sqlite3 -init user.sqlite3 nut.db
+
+Only the initial PRAGMA in user.sqlite3 that sets recursive triggers and the
+code for automatic portion control are absolutely necessary at each invocation
+of the database, but user.sqlite3 also has my personal views and triggers that
+I have found helpful.  You can add, delete, or change most of user.sqlite3 to
+customize it as you wish.  Read the comments and SQL in all the init files to
+understand what is going on, and look at the EXAMPLES file to see SQL
+statements that perform the most common NUT functions.
+
+Jim Jozwiak
+http://nut.sourceforge.net
+jozwiak@gmail.com
