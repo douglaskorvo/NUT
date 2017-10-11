@@ -284,12 +284,9 @@ grid [tk::spinbox .nut.po.pane.wlogframe.weight_s -width 7 -justify right -from 
 grid [ttk::label .nut.po.pane.wlogframe.bf_l -text "Body Fat %" -style "po.TLabel" -justify right] -row 1 -column 1 -padx [expr {$::magnify * 5}] -pady [expr {$::magnify * 10}] -sticky e
 grid [tk::spinbox .nut.po.pane.wlogframe.bf_s -width 7 -justify right -from 1 -to 9999 -increment 0.1 -textvariable ::currentbfp -disabledforeground "#000000" ] -row 1 -column 2 -padx [expr {$::magnify * 5}] -pady [expr {$::magnify * 10}]
 grid [ttk::button .nut.po.pane.wlogframe.accept -text "Accept New\nMeasurements" -command AcceptNewMeasurements] -row 2 -rowspan 2 -column 0 -columnspan 3 -padx [expr {$::magnify * 5}] -pady [expr {$::magnify * 10}] -sticky e
-#grid [ttk::button .nut.po.pane.wlogframe.accept -text "Accept New\nMeasurements" -command AcceptNewMeasurements -style po.TButton] -row 2 -rowspan 2 -column 0 -columnspan 3 -padx [expr {$::magnify * 5}] -pady [expr {$::magnify * 10}] -sticky e
 grid [ttk::button .nut.po.pane.wlogframe.clear -text "Clear Weight Log" -command ClearWeightLog] -row 10 -column 0 -columnspan 3 -padx [expr {$::magnify * 5}] -sticky e
-#grid [ttk::button .nut.po.pane.wlogframe.clear -text "Clear Weight Log" -command ClearWeightLog] -row 10 -column 0 -columnspan 3 -padx [expr {$::magnify * 5}] -pady [expr {$::magnify * 10}] -sticky e
 
 grid [ttk::label .nut.po.pane.wlogframe.summary -wraplength [expr {$::magnify * 150}] -textvariable ::wlogsummary -justify right -style po.TLabel] -row 4 -rowspan 6 -column 0 -columnspan 3 -padx [expr {$::magnify * 5}] -sticky e
-#grid [ttk::label .nut.po.pane.wlogframe.summary -wraplength [expr {$::magnify * 150}] -textvariable ::wlogsummary -justify center -style po.TLabel] -row 4 -rowspan 6 -column 0 -columnspan 3 -padx [expr {$::magnify * 5}] -pady [expr {$::magnify * 10}] -sticky e
 
 grid rowconfigure .nut.po.pane.optframe all -uniform 1
 grid columnconfigure .nut.po.pane.optframe all -uniform 1
@@ -777,7 +774,7 @@ set ComputeDerivedValues {
 proc ComputeDerivedValues {db table} {
 $db eval {BEGIN}
 $db eval "update $table set VITE = null"
-$db eval "update $table set VITE = case when VITE_ADDED is not null and TOCPHA is not null then (VITE_ADDED/0.45)+((TOCPHA-VITE_ADDED)/0.67) when VITE_ADDED is not null then VITE_ADDED/0.45 when TOCPHA is not null then TOCPHA/0.67 end"
+$db eval "update $table set VITE = case when VITE_ADDED is not null and TOCPHA is not null then (VITE_ADDED/0.45)+((TOCPHA-VITE_ADDED)*1.5) when VITE_ADDED is not null then VITE_ADDED/0.45 when TOCPHA is not null then TOCPHA*1.5 end"
 $db eval "update $table set LA = null"
 $db eval "update $table set LA = case when F18D2CN6 is not null then F18D2CN6 when F18D2CN6 is null and F18D2 is not null then F18D2 end"
 $db eval "update $table set LA = case when F18D2CN6 is null and F18D2 is not null and F18D2T is not null then LA - F18D2T else LA end"
@@ -1670,11 +1667,9 @@ proc RefreshWeightLog {args} {
   set ::currentbfp 0.0
   }
  set ::span [db eval { select abs(min(cast (julianday(substr(wldate,1,4) || '-' || substr(wldate,5,2) || '-' || substr(wldate,7,2)) - julianday('now', 'localtime') as int))) from wlog where cleardate is null } ]
- set CASmode Bulking
- if {$::fatslope > 0.0} {set CASmode Cutting}
  set datapoints [db eval {select count(*) from wlog where cleardate is null}]
  if {$datapoints > 1} {
-  set ::wlogsummary "Based on the trend of $datapoints data points so far...\n\nPredicted lean mass today = [expr {round(10.0 * ($::weightyintercept - $::fatyintercept)) / 10.0 }]\n\nPredicted fat mass today = $::fatyintercept\n\nIf the predictions are correct, you [expr {$leanslope >= 0.0 ? "gained" : "lost"}] [expr {abs(round($leanslope * $::span * 1000.0) / 1000.0)}] lean mass over $::span [expr {$::span == 1 ? "day" : "days"}] and [expr {$::fatslope >= 0.0 ? "gained" : "lost"}] [expr {abs(round($::fatslope * $::span * 1000.0) / 1000.0)}] fat mass.\n\n[expr {$autocal == 2 ? "Calorie Auto-Set Mode = $CASmode" : ""}]"
+  set ::wlogsummary "Based on the trend of $datapoints data points so far...\n\nPredicted lean mass today = [expr {round(10.0 * ($::weightyintercept - $::fatyintercept)) / 10.0 }]\n\nPredicted fat mass today = $::fatyintercept\n\nIf the predictions are correct, you [expr {$leanslope >= 0.0 ? "gained" : "lost"}] [expr {abs(round($leanslope * $::span * 1000.0) / 1000.0)}] lean mass over $::span [expr {$::span == 1 ? "day" : "days"}] and [expr {$::fatslope >= 0.0 ? "gained" : "lost"}] [expr {abs(round($::fatslope * $::span * 1000.0) / 1000.0)}] fat mass."
   } else { set ::wlogsummary "" } 
  if {$datapoints == 1} {
   db eval {select weight as "::weightyintercept", bodyfat as "::currentbfp" from wlog where cleardate is null} { }
@@ -1710,17 +1705,16 @@ db eval {select autocal, wltweak, "::weightslope", "::fatslope", "::weightslope"
 if {$autocal == 2} {
  if {$::fatslope > 0.0} {
   set ::ENERC_KCALopt [expr {$::ENERC_KCALopt - 20.0}]
-  db eval {update options set wltweak = 1}
-  auto_cal
-  } elseif {$leanslope < 0.0 && $::fatslope < 0.0} { 
-  set ::ENERC_KCALopt [expr {$::ENERC_KCALopt + 20.0}]
-  db eval {update options set wltweak = 1}
-  auto_cal
-  } elseif {$leanslope > 0.0 && $::fatslope < 0.0 && $wltweak == 1} {
   db eval {update wlog set cleardate = $today where cleardate is NULL}
   set ::currentbfp [expr {round(1000.0 * $::fatyintercept / $::weightyintercept) / 10.0}]
   db eval {insert into wlog values ( $::weightyintercept, $::currentbfp, $today, NULL)}
-  db eval {update options set wltweak = 0}
+  auto_cal
+  } elseif {$leanslope < 0.0 && $::fatslope < 0.0} { 
+  set ::ENERC_KCALopt [expr {$::ENERC_KCALopt + 20.0}]
+  db eval {update wlog set cleardate = $today where cleardate is NULL}
+  set ::currentbfp [expr {round(1000.0 * $::fatyintercept / $::weightyintercept) / 10.0}]
+  db eval {insert into wlog values ( $::weightyintercept, $::currentbfp, $today, NULL)}
+  auto_cal
   }
  }
 
@@ -2131,7 +2125,7 @@ proc PCF {seq ndb args} {
  upvar 0 $ndbName ndbvar $dvName dvvar $rmName rmvar
  set factor [lindex $::MealfoodPCFfactor $seq]
  set ::nutvalchange [expr {($dvvar - $rmvar) * 100.0 / $dvvar}]
- if {$::nutvalchange < 0.05 && $::nutvalchange > -0.05} {return}
+ if {$::nutvalchange < 0.1 && $::nutvalchange > -0.1} {return}
  if {[expr {($dvvar - $rmvar)}] == 0.0} {return}
  if {($::GRAMSopt && abs($ndbvar) >= 1350.0) || (!$::GRAMSopt && abs($ndbvar) >= 135.0)} {
   if {$ndbvar > 0.0} { 
@@ -7854,7 +7848,7 @@ if {[dbmem eval {select count(*) from options}] == 0} {
 }
 
 db eval {BEGIN}
-db eval {insert or replace into version values('NUTsqlite 1.9.6',NULL)}
+db eval {insert or replace into version values('NUTsqlite 1.9.7',NULL)}
 db eval {delete from tcl_code}
 db eval {insert or replace into tcl_code values('Main',$Main)}
 db eval {insert or replace into tcl_code values('InitialLoad',$InitialLoad)}

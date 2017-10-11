@@ -1,3 +1,13 @@
+2016-03-18 NUTsqlite-1.9.7 released.
+
+2016-03-02 Changed calorie auto-set feature to immediately end cycle if fat
+           mass is going up or both lean and fat are going down.  This gets
+           rid of long cycles with a big dive at the beginning and then an
+           extended effort to get lean mass back up.  These long cycles when
+           they occur are just too stressful and don't accomplish anything.
+
+2015-09-30 NUTsqlite-1.9.6 released.  Verified it works with sr28.
+
 2015-09-12 Some of the confusion installing on a Mac appears to be that their
            unzip of multiple files puts the files in yet another separate
            directory.  I changed the README to explicitly say this, and I added

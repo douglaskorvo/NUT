@@ -334,6 +334,8 @@ biochemistry is on the
 <B>NUT</B>
 site at 
 <A HREF="http://nut.sourceforge.net/">http://nut.sourceforge.net/</A>.
+Lands' equation was developed for low-fat diets; it overstates the Omega-3
+requirement for high-fat diets such as a very-low-carb ketogenic diet.
 <P>
 (Following is a description of the rightmost column on the screen that concerns
 the weight log.  At some lower screen resolutions, this column is partially occluded.  However, if you move the mouse
@@ -384,11 +386,12 @@ lean mass and loss of fat mass.
 will move calories by a maximum of 20 calories a day.
 If both lean mass and fat mass are trending down, 
 <B>NUT</B> 
-raises calories; if fat mass is trending up,
+raises calories and clears the weight log down to one entry; if fat mass is trending up,
 <B>NUT</B>
-lowers calories.
-A cycle ends when fat mass is trending down and lean mass is trending up, and when a
-cycle begins with these favorable trends, it is allowed to continue.
+lowers calories and likewise clears the weight log.
+When fat mass is trending down and lean mass is trending up,
+this favorable trend is allowed to continue for as long as it lasts
+with no calorie changes, and a report is given of fat mass loss and lean mass gain for this current cycle.
 <P>
 If you are not using the Calorie Auto-Set
 feature, you can clear the weight log whenever you like; the usual reason would
@@ -495,8 +498,9 @@ Increasing lean mass is great, but as the sole measure of  body
 composition 
 it leads to obesity; decreasing fat mass is great,
 but as the sole measure of  body composition it leads to frailty.
-What we need is an equation  which increases in value as body
-composition improves.  Perhaps the simplest is lean mass minus fat mass, or in other words, what is the "spread" between the lean mass and the fat mass quantities:
+What we need is an equation which increases in value as body
+composition improves.  
+Perhaps the simplest is lean mass minus fat mass, or in other words, what is the "spread" between the lean mass and the fat mass quantities:
 <P>
 <B><PRE>
 sqlite> select wldate, round(weight - weight * bodyfat / 100, 1) as leanmass, round(weight * bodyfat / 100, 1) as fatmass, round(weight - 2 * weight * bodyfat / 100, 1) as bodycomp from wlog group by wldate; 
@@ -516,37 +520,6 @@ sqlite> select wldate, round(weight - weight * bodyfat / 100, 1) as leanmass, ro
 20150617|124.2|32.4|91.8
 20150618|124.8|32.8|92.0
 20150619|125.3|32.3|93.0
-</B></PRE>
-<P>
-Another approach along the same lines is the following view which gives
-an equation expressing the correlation between your bodyfat percentage and 
-your weight computed
-from your accumulated weight log measurements.  If your weight turns out to be
-more
-than the equation predicts, 
-your body composition has improved; i.e. you have more lean mass at a given bodyfat percentage than you used to.
-This is useful to know if you are using calorie auto-set mode or another
-strategy and want to be
-sure it is improving your body composition rather than making it worse.
-<P>
-<B><PRE>
-sqlite> .schema bf2weight
-CREATE VIEW bf2weight as select round(bf2weight,1) || ' * bodyfat% + ' || round(sumy / n - bf2weight * sumx / n,1) || ' = total weight' from (select (sumxy - (sumx * sumy / n)) / (sumxx - (sumx * sumx / n)) as bf2weight, sumy, n, sumx from (select sum(x) as sumx, sum(y) as sumy, sum(x*y) as sumxy, sum(x*x) as sumxx, n from (select bodyfat as x, weight as y, cast ((select count(*) from wlog) as real) as n from wlog)));
-sqlite> select * from bf2weight;
-2.5 * bodyfat% + 102.6 = total weight
-</B></PRE>
-<P>
-Let's redo the previous view to select the numbers instead of
-stating the equation.  That way we can join the view to the wlog table to
-see how today's weight compares to what is predicted from our previous efforts.
-If today's weight (column 2) is greater than the prediction (column 3), we're
-doing better than we were.
-<P>
-<B><PRE>
-sqlite> .schema bf2weight
-CREATE VIEW bf2weight as select bf2weight, sumy / n - bf2weight * sumx / n as yintercept from (select (sumxy - (sumx * sumy / n)) / (sumxx - (sumx * sumx / n)) as bf2weight, sumy, n, sumx from (select sum(x) as sumx, sum(y) as sumy, sum(x*y) as sumxy, sum(x*x) as sumxx, n from (select bodyfat as x, weight as y, cast ((select count(*) from wlog) as real) as n from wlog)));
-sqlite> select wldate, weight, round(bf2weight * bodyfat + yintercept, 1) from wlog join bf2weight where wldate = (select max(wldate) from wlog);
-20150809|159.0|155.5
 </B></PRE>
 <P>
 Now, let's turn to a different task.  I've created a bad recipe and I want to
@@ -574,7 +547,7 @@ then is to delete the meal
 from the database using the meal_date and meal number like this:
 <P>
 <B><PRE>
-sqlite> delete from meal_foods where meal_date = 20150413 and meal = 3;
+sqlite> delete from mealfoods where meal_date = 20150413 and meal = 3;
 </B></PRE>
 <P>
 Although you can update some of the 
@@ -691,6 +664,39 @@ sqlite> select NDB_No, Shrt_Desc, round(K / CHO_NONFIB) as val from food_des whe
 11257|Lettuce, red leaf, raw (lactuca sativa var. crispa)|138.0
 11253|Lettuce, green leaf, raw (lactuca sativa var. crispa)|124.0
 11252|Lettuce,iceberg (incl crisphead types),raw|80.0
+</B></PRE>
+<P>
+I've been experimenting with coconut oil on my ketogenic diet.
+Sometimes I feel I've been having too much and I cut back and other
+times I feel I could use more, so I increase it, but I do not have any
+idea what amount of coconut oil per meal has seemed satisfactory most
+of the time.  I know the NDB_No is 4047, so what I am going to do is
+to make a list of how much coconut oil I had per meal for the various
+days and then count the occurences of each amount of coconut oil, to
+see what were my most popular amounts of coconut oil per meal.
+The first column is ounces of coconut oil and the second column is a count of the
+days when I had that much.  I can see that 1.1 ounces per meal (a little over 2
+tablespoons) was my most common dosage per meal:
+<P>
+<B><PRE>
+sqlite> select val, count(meal_date) as ct from (select meal_date, round(sum(mhectograms / .2835 / 3.0),1) as val from mealfoods where NDB_No = 4047 group by meal_date order by val) group by val order by ct;
+0.1|1
+0.3|1
+0.2|3
+0.4|3
+0.9|3
+1.4|4
+0.6|5
+1.7|6
+0.7|7
+1.5|7
+0.5|10
+1.3|11
+1.6|11
+0.8|14
+1.2|18
+1.0|19
+1.1|27
 </B></PRE>
 <P>
 If you're interested in Omega-3 fatty acids, here's a view that does the
