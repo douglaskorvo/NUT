@@ -1,3 +1,17 @@
+2014-10-12 NUTsqlite-1.7 released.
+
+2014-10-12 Pressing a food button on "Record Meals" is not necessarily producing
+           the same quantity when the food opens up in "View Foods".  Fixed
+           proc rm2vf.
+
+2014-10-05 Made all the {nut}dv variables round the same way as the {nut}am
+           variables to remove inconsistencies in auto portion control, i.e.
+           ::FATdv keeps firing because it it is not exactly equal to ::FATam.
+
+2014-10-03 Removed redundant dv_change call in proc ChangePersonalOptions.
+           Write to {nut}opt variable will take care of it because of traces on
+           all the {nut}opt variables.
+
 2014-10-03 NUTsqlite-1.6 released.
 
 2014-10-03 Removed redundant SQL processing from proc update_am in case where

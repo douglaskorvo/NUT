@@ -1602,6 +1602,7 @@ proc ::CHOCDFnew_vf {args} {
 proc ::ENERC_KCALdv_change {args} {
  if {$::ENERC_KCALopt == 0.0} {set newdv $::ENERC_KCALdv_default} elseif { $::ENERC_KCALopt > 0.0} {set newdv $::ENERC_KCALopt} else {set newdv $::ENERC_KCALam}
  if {$newdv == 0.0} {set newdv $::ENERC_KCALdv_default}
+ set newdv [expr {round(10.0 * $newdv) / 10.0}]
  if {$newdv != $::ENERC_KCALdv} { set ::ENERC_KCALdv $newdv }
  if {[string is double -strict $::ENERC_KCALam]} {
   set ::ENERC_KCALamdv [expr {round(100.0 * $::ENERC_KCALam / $::ENERC_KCALdv)}]
@@ -3440,7 +3441,7 @@ proc InitializePersonalOptions {args} {
  db eval {select autocal, wlpolarity, wltweak from options} { }
 
  if {$::ENERC_KCALopt == -1.0} {
-  .nut.po.pane.optframe.cal_s configure -state disabled -textvariable ::ENERC_KCALdv_rounded
+  .nut.po.pane.optframe.cal_s configure -state disabled -textvariable ::ENERC_KCALdv
   set ::ENERC_KCALpo -1
   } elseif {$::ENERC_KCALopt == 0.0} {
   .nut.po.pane.optframe.cal_s configure -state normal -textvariable ::ENERC_KCALopt
@@ -3455,10 +3456,10 @@ proc InitializePersonalOptions {args} {
   }
 
  if {$::FATopt == -1.0} {
-  .nut.po.pane.optframe.fat_s configure -state disabled -textvariable ::FATdv_rounded
+  .nut.po.pane.optframe.fat_s configure -state disabled -textvariable ::FATdv
   set ::FATpo -1
   } elseif {$::FATopt == 0.0} {
-  .nut.po.pane.optframe.fat_s configure -state disabled -textvariable ::FATdv_rounded
+  .nut.po.pane.optframe.fat_s configure -state disabled -textvariable ::FATdv
   set ::FATpo 2
   } else {
   .nut.po.pane.optframe.fat_s configure -state normal -textvariable ::FATopt
@@ -3466,10 +3467,10 @@ proc InitializePersonalOptions {args} {
   }
 
  if {$::PROCNTopt == -1.0} {
-  .nut.po.pane.optframe.prot_s configure -state disabled -textvariable ::PROCNTdv_rounded
+  .nut.po.pane.optframe.prot_s configure -state disabled -textvariable ::PROCNTdv
   set ::PROCNTpo -1
   } elseif {$::PROCNTopt == 0.0} {
-  .nut.po.pane.optframe.prot_s configure -state disabled -textvariable ::PROCNTdv_rounded
+  .nut.po.pane.optframe.prot_s configure -state disabled -textvariable ::PROCNTdv
   set ::PROCNTpo 2
   } else {
   .nut.po.pane.optframe.prot_s configure -state normal -textvariable ::PROCNTopt
@@ -3477,11 +3478,11 @@ proc InitializePersonalOptions {args} {
   }
 
  if {$::CHO_NONFIBopt == -1.0} {
-  .nut.po.pane.optframe.nfc_s configure -state disabled -textvariable ::CHO_NONFIBdv_rounded
+  .nut.po.pane.optframe.nfc_s configure -state disabled -textvariable ::CHO_NONFIBdv
   set ::CHO_NONFIBpo -1
   .nut.po.pane.optframe.fat_cb2 configure -text "Balance of Calories"
   } elseif {$::CHO_NONFIBopt == 0.0} {
-  .nut.po.pane.optframe.nfc_s configure -state disabled -textvariable ::CHO_NONFIBdv_rounded
+  .nut.po.pane.optframe.nfc_s configure -state disabled -textvariable ::CHO_NONFIBdv
   set ::CHO_NONFIBpo 2
   .nut.po.pane.optframe.fat_cb2 configure -text "DV 30% of Calories"
   } else {
@@ -3491,10 +3492,10 @@ proc InitializePersonalOptions {args} {
   }
 
  if {$::FIBTGopt == -1.0} {
-  .nut.po.pane.optframe.fiber_s configure -state disabled -textvariable ::FIBTGdv_rounded
+  .nut.po.pane.optframe.fiber_s configure -state disabled -textvariable ::FIBTGdv
   set ::FIBTGpo -1
   } elseif {$::FIBTGopt == 0.0} {
-  .nut.po.pane.optframe.fiber_s configure -state disabled -textvariable ::FIBTGdv_rounded
+  .nut.po.pane.optframe.fiber_s configure -state disabled -textvariable ::FIBTGdv
   set ::FIBTGpo 2
   } else {
   .nut.po.pane.optframe.fiber_s configure -state normal -textvariable ::FIBTGopt
@@ -3502,10 +3503,10 @@ proc InitializePersonalOptions {args} {
   }
 
  if {$::FASATopt == -1.0} {
-  .nut.po.pane.optframe.sat_s configure -state disabled -textvariable ::FASATdv_rounded
+  .nut.po.pane.optframe.sat_s configure -state disabled -textvariable ::FASATdv
   set ::FASATpo -1
   } elseif {$::FASATopt == 0.0} {
-  .nut.po.pane.optframe.sat_s configure -state disabled -textvariable ::FASATdv_rounded
+  .nut.po.pane.optframe.sat_s configure -state disabled -textvariable ::FASATdv
   set ::FASATpo 2
   } else {
   .nut.po.pane.optframe.sat_s configure -state normal -textvariable ::FASATopt
@@ -3513,10 +3514,10 @@ proc InitializePersonalOptions {args} {
   }
 
  if {$::FAPUopt == -1.0} {
-  .nut.po.pane.optframe.efa_s configure -state disabled -textvariable ::FAPUdv_rounded
+  .nut.po.pane.optframe.efa_s configure -state disabled -textvariable ::FAPUdv
   set ::FAPUpo -1
   } elseif {$::FAPUopt == 0.0} {
-  .nut.po.pane.optframe.efa_s configure -state disabled -textvariable ::FAPUdv_rounded
+  .nut.po.pane.optframe.efa_s configure -state disabled -textvariable ::FAPUdv
   set ::FAPUpo 2
   } else {
   .nut.po.pane.optframe.efa_s configure -state normal -textvariable ::FAPUopt
@@ -3544,30 +3545,30 @@ proc ChangePersonalOptions {nuttag args} {
  if {$nuttag == "ENERC_KCAL"} {
   if {$povar == 2} {
    db eval {update options set autocal = 2}
-   set ::ENERC_KCALopt $::ENERC_KCALdv_rounded
+   set ::ENERC_KCALopt $::ENERC_KCALdv
    .nut.po.pane.optframe.cal_s configure -state normal -textvariable ::ENERC_KCALopt
    } elseif {$povar == 0} {
    db eval {update options set autocal = 0}
-   set ::ENERC_KCALopt $::ENERC_KCALdv_rounded
+   set ::ENERC_KCALopt $::ENERC_KCALdv
    .nut.po.pane.optframe.cal_s configure -state normal -textvariable ::ENERC_KCALopt
    } else {
    db eval {update options set autocal = 0}
-   .nut.po.pane.optframe.cal_s configure -state disabled -textvariable ::ENERC_KCALdv_rounded
+   .nut.po.pane.optframe.cal_s configure -state disabled -textvariable ::ENERC_KCALdv
    set ::ENERC_KCALopt -1
    }
   RefreshWeightLog
   } elseif {$nuttag == "FAT"} {
   if {$povar == 2} {
    set ::FATopt 0.0
-   .nut.po.pane.optframe.fat_s configure -state disabled -textvariable ::FATdv_rounded
+   .nut.po.pane.optframe.fat_s configure -state disabled -textvariable ::FATdv
    } elseif {$povar == 0} {
-   set ::FATopt $::FATdv_rounded
+   set ::FATopt $::FATdv
    .nut.po.pane.optframe.fat_s configure -state normal -textvariable ::FATopt
    if {$::CHO_NONFIBopt != 0.0} {
     .nut.po.pane.optframe.nfc_cb2 invoke
     }
    } else {
-   .nut.po.pane.optframe.fat_s configure -state disabled -textvariable ::FATdv_rounded
+   .nut.po.pane.optframe.fat_s configure -state disabled -textvariable ::FATdv
    set ::FATopt -1
    if {$::CHO_NONFIBopt != 0.0} {
     .nut.po.pane.optframe.nfc_cb2 invoke
@@ -3576,28 +3577,28 @@ proc ChangePersonalOptions {nuttag args} {
   } elseif {$nuttag == "PROCNT"} {
   if {$povar == 2} {
    set ::PROCNTopt 0.0
-   .nut.po.pane.optframe.prot_s configure -state disabled -textvariable ::PROCNTdv_rounded
+   .nut.po.pane.optframe.prot_s configure -state disabled -textvariable ::PROCNTdv
    } elseif {$povar == 0} {
-   set ::PROCNTopt $::PROCNTdv_rounded
+   set ::PROCNTopt $::PROCNTdv
    .nut.po.pane.optframe.prot_s configure -state normal -textvariable ::PROCNTopt
    } else {
-   .nut.po.pane.optframe.prot_s configure -state disabled -textvariable ::PROCNTdv_rounded
+   .nut.po.pane.optframe.prot_s configure -state disabled -textvariable ::PROCNTdv
    set ::PROCNTopt -1
    }
   } elseif {$nuttag == "CHO_NONFIB"} {
   if {$povar == 2} {
    set ::CHO_NONFIBopt 0.0
-   .nut.po.pane.optframe.nfc_s configure -state disabled -textvariable ::CHO_NONFIBdv_rounded
+   .nut.po.pane.optframe.nfc_s configure -state disabled -textvariable ::CHO_NONFIBdv
    .nut.po.pane.optframe.fat_cb2 configure -text "DV 30% of Calories"
    } elseif {$povar == 0} {
-   set ::CHO_NONFIBopt $::CHO_NONFIBdv_rounded
+   set ::CHO_NONFIBopt $::CHO_NONFIBdv
    .nut.po.pane.optframe.nfc_s configure -state normal -textvariable ::CHO_NONFIBopt
    .nut.po.pane.optframe.fat_cb2 configure -text "Balance of Calories"
    if {$::FATopt != 0.0} {
     .nut.po.pane.optframe.fat_cb2 invoke
     }
    } else {
-   .nut.po.pane.optframe.nfc_s configure -state disabled -textvariable ::CHO_NONFIBdv_rounded
+   .nut.po.pane.optframe.nfc_s configure -state disabled -textvariable ::CHO_NONFIBdv
    set ::CHO_NONFIBopt -1
    .nut.po.pane.optframe.fat_cb2 configure -text "Balance of Calories"
    if {$::FATopt != 0.0} {
@@ -3607,34 +3608,34 @@ proc ChangePersonalOptions {nuttag args} {
   } elseif {$nuttag == "FIBTG"} {
   if {$povar == 2} {
    set ::FIBTGopt 0.0
-   .nut.po.pane.optframe.fiber_s configure -state disabled -textvariable ::FIBTGdv_rounded
+   .nut.po.pane.optframe.fiber_s configure -state disabled -textvariable ::FIBTGdv
    } elseif {$povar == 0} {
-   set ::FIBTGopt $::FIBTGdv_rounded
+   set ::FIBTGopt $::FIBTGdv
    .nut.po.pane.optframe.fiber_s configure -state normal -textvariable ::FIBTGopt
    } else {
-   .nut.po.pane.optframe.fiber_s configure -state disabled -textvariable ::FIBTGdv_rounded
+   .nut.po.pane.optframe.fiber_s configure -state disabled -textvariable ::FIBTGdv
    set ::FIBTGopt -1
    }
   } elseif {$nuttag == "FASAT"} {
   if {$povar == 2} {
    set ::FASATopt 0.0
-   .nut.po.pane.optframe.sat_s configure -state disabled -textvariable ::FASATdv_rounded
+   .nut.po.pane.optframe.sat_s configure -state disabled -textvariable ::FASATdv
    } elseif {$povar == 0} {
-   set ::FASATopt $::FASATdv_rounded
+   set ::FASATopt $::FASATdv
    .nut.po.pane.optframe.sat_s configure -state normal -textvariable ::FASATopt
    } else {
-   .nut.po.pane.optframe.sat_s configure -state disabled -textvariable ::FASATdv_rounded
+   .nut.po.pane.optframe.sat_s configure -state disabled -textvariable ::FASATdv
    set ::FASATopt -1
    }
   } elseif {$nuttag == "FAPU"} {
   if {$povar == 2} {
    set ::FAPUopt 0.0
-   .nut.po.pane.optframe.efa_s configure -state disabled -textvariable ::FAPUdv_rounded
+   .nut.po.pane.optframe.efa_s configure -state disabled -textvariable ::FAPUdv
    } elseif {$povar == 0} {
-   set ::FAPUopt $::FAPUdv_rounded
+   set ::FAPUopt $::FAPUdv
    .nut.po.pane.optframe.efa_s configure -state normal -textvariable ::FAPUopt
    } else {
-   .nut.po.pane.optframe.efa_s configure -state disabled -textvariable ::FAPUdv_rounded
+   .nut.po.pane.optframe.efa_s configure -state disabled -textvariable ::FAPUdv
    set ::FAPUopt -1
    }
   } elseif {$nuttag == "FAPU1"} {
@@ -3652,9 +3653,7 @@ proc ChangePersonalOptions {nuttag args} {
    .nut.po.pane.optframe.vite_s configure -state disabled -textvariable ::${nuttag}dv
    set ::${nuttag}opt -1
    }
-  ::${nuttag}dv_change
   }
-
  }
 
 #end ChangePersonalOptions
@@ -4158,6 +4157,7 @@ proc PCF {seq ndb args} {
  set factor [lindex $::MealfoodPCFfactor $seq]
  set ::nutvalchange [expr {($dvvar - $rmvar) * 100.0 / $dvvar}]
  if {$::nutvalchange < 0.5 && $::nutvalchange > -0.5} {return}
+ if {[expr {($dvvar - $rmvar)}] == 0.0} {return}
  if {($::GRAMSopt && abs($ndbvar) >= 1350.0) || (!$::GRAMSopt && abs($ndbvar) >= 135.0)} {
   if {$ndbvar > 0.0} { 
    set looong1 ""
@@ -4962,6 +4962,7 @@ set auto_cal {
 proc auto_cal {} {
 
  if {$::FIBTGopt == 0.0} {set newdv [expr {$::ENERC_KCALdv / 2000.0 * $::FIBTGdv_default}]} elseif {$::FIBTGopt == -1.0 && [string is double -strict $::FIBTGam] && $::FIBTGam > 0.0} {set newdv $::FIBTGam} elseif {$::FIBTGopt > 0.0} {set newdv $::FIBTGopt} else {set newdv $::FIBTGdv_default}
+ set newdv [expr {round(10.0 * $newdv) / 10.0}]
  if {$newdv != $::FIBTGdv} {set ::FIBTGdv $newdv}
  
  if {[string is double -strict $::PROCNTam] && $::PROCNTam > 0.0 && $::PROT_KCALam > 0.0} {set PROTcalpergram [expr {$::PROT_KCALam / $::PROCNTam}]} else {set PROTcalpergram 4.0}
@@ -4981,29 +4982,35 @@ proc auto_cal {} {
  if {$fat > 0.0} {set fa2fat [expr {($sat + $mono + $pufa + $trans) / $fat}]} else {set fa2fat 0.95}
  
  if {$::ENERC_KCALopt == 0.0 && $::PROCNTopt == 0.0} {set newdv $::PROCNTdv_default} elseif {$::PROCNTopt == 0.0} {set newdv [expr {$::ENERC_KCALdv / 2000.0 * $::PROCNTdv_default}]} elseif {$::PROCNTopt == -1.0 && [string is double -strict $::PROCNTam] && $::PROCNTam > 0.0} {set newdv $::PROCNTam} elseif {$::PROCNTopt > 0.0} {set newdv $::PROCNTopt}
+ set newdv [expr {round(10.0 * $newdv) / 10.0}]
  if {$newdv != $::PROCNTdv} {set ::PROCNTdv $newdv}
  
  if {$::CHO_NONFIBopt != 0.0} {
   if {$::CHO_NONFIBopt > 0.0} {set newdv $::CHO_NONFIBopt} elseif {[string is double -strict $::CHO_NONFIBam] && $::CHO_NONFIBam > 0.0} {set newdv $::CHO_NONFIBam} else {set newdv $::CHO_NONFIBdv_default}
   if {$newdv != $::CHO_NONFIBdv} {set ::CHO_NONFIBdv $newdv}
   set newdv [expr {$::CHO_NONFIBdv + $::FIBTGdv}]
+  set newdv [expr {round(10.0 * $newdv) / 10.0}]
   if {$newdv != $::CHOCDFdv} {set ::CHOCDFdv $newdv}
   }
  
  if {$::FATopt == -1.0 && [string is double -strict $::FATam] && $::FATam > 0.0} {set newdv $::FATam} elseif {$::FATopt == -1.0 && [string is double -strict $::FATam] && $::FATam == 0.0} {set newdv $::FATdv_default} elseif {$::FATopt > 0.0} {set newdv $::FATopt} elseif {$::FATopt == 0.0 && $::CHO_NONFIBopt == 0.0} {set newdv [expr {0.3 * $::ENERC_KCALdv / $FATcalpergram}]} else {set newdv [expr {($::ENERC_KCALdv - $alccals - ($::PROCNTdv * $PROTcalpergram) - ($::CHOCDFdv * $CHOCDFcalpergram)) / $FATcalpergram}]}
+ set newdv [expr {round(10.0 * $newdv) / 10.0}]
  if {$newdv != $::FATdv} {set ::FATdv $newdv}
  
  if {$::CHO_NONFIBopt == 0.0} {
   set newdv [expr {($::ENERC_KCALdv - $alccals - ($::PROCNTdv * $PROTcalpergram) - ($::FATdv * $FATcalpergram)) / $CHOCDFcalpergram}]
   if {$newdv != $::CHOCDFdv} {set ::CHOCDFdv $newdv}
   set newdv [expr {$::CHOCDFdv - $::FIBTGdv}]
+  set newdv [expr {round(10.0 * $newdv) / 10.0}]
   if {$newdv != $::CHO_NONFIBdv} {set ::CHO_NONFIBdv $newdv}
   }
  
  if {$::FASATopt == -1.0 && [string is double -strict $::FASATam] && $::FASATam > 0.0} {set newdv $::FASATam} elseif {$::FASATopt == -1.0} {set newdv $::FASATdv_default} elseif {$::FASATopt > 0.0} {set newdv $::FASATopt} elseif {$::FASATopt == 0.0 && $::ENERC_KCALopt == 0.0} {set newdv $::FASATdv_default} else {set newdv [expr {0.1 * $::ENERC_KCALdv / $FATcalpergram * $fa2fat}]}
+ set newdv [expr {round(10.0 * $newdv) / 10.0}]
  if {$newdv != $::FASATdv} {set ::FASATdv $newdv}
  
  if {$::FAPUopt == -1.0 && [string is double -strict $::FAPUam] && $::FAPUam > 0.0} {set newdv $::FAPUam} elseif {$::FAPUopt == -1.0} {set newdv $::FAPUdv_default} elseif {$::FAPUopt > 0.0} {set newdv $::FAPUopt} elseif {$::FAPUopt == 0.0 && $::ENERC_KCALopt == 0.0} {set newdv $::FAPUdv_default} else {set newdv [expr {0.04 * $::ENERC_KCALdv / $FATcalpergram * $fa2fat}]}
+ set newdv [expr {round(10.0 * $newdv) / 10.0}]
  if {$newdv != $::FAPUdv} {set ::FAPUdv $newdv}
  
  if {[string is double -strict $::FAPUam] && $::FAPUam > 0.0} {set pufareductionfactor [expr {$::FAPUam / $::FAPUdv}]} else {set pufareductionfactor 1.0}
@@ -5012,17 +5019,9 @@ proc auto_cal {} {
  set long6 [expr {$long6 / $pufareductionfactor}]
  
  set newdv [expr {($::FATdv * $fa2fat) - $::FASATdv - $::FAPUdv - $trans}]
+ set newdv [expr {round(10.0 * $newdv) / 10.0}]
  if {$newdv != $::FAMSdv} {set ::FAMSdv $newdv}
  
- set ::CHO_NONFIBdv_rounded [expr {round(10.0 * $::CHO_NONFIBdv) / 10.0}]
- set ::ENERC_KCALdv_rounded [expr {round(10.0 * $::ENERC_KCALdv) / 10.0}]
- set ::FAMSdv_rounded [expr {round(10.0 * $::FAMSdv) / 10.0}]
- set ::FAPUdv_rounded [expr {round(10.0 * $::FAPUdv) / 10.0}]
- set ::FASATdv_rounded [expr {round(10.0 * $::FASATdv) / 10.0}]
- set ::FATdv_rounded [expr {round(10.0 * $::FATdv) / 10.0}]
- set ::FIBTGdv_rounded [expr {round(10.0 * $::FIBTGdv) / 10.0}]
- set ::PROCNTdv_rounded [expr {round(10.0 * $::PROCNTdv) / 10.0}]
-
  set current [n6hufa $short3 $short6 $long3 $long6 $::FASATdv $::FAMSdv $trans $::FAPUdv $::ENERC_KCALdv 1]
  
  if {$current == 0.0} { return }
@@ -5487,7 +5486,9 @@ proc rank2vf {args} {
 set rm2vf {
 
 proc rm2vf {seq} {
- FoodChoicevf_alt [lindex $::MealfoodStatus $seq] 0.0 0
+ set ndb [lindex $::MealfoodStatus $seq]
+ set qty [db eval {select mhectograms from mealfoods where NDB_No = $ndb and meal_date = $::currentmeal / 100 and meal = $::currentmeal % 100}]
+ FoodChoicevf_alt $ndb [expr {$qty * 100.0}] 1
  }
 
 #end rm2vf
@@ -5526,7 +5527,7 @@ proc changedv_vitmin {nut} {
 #end changedv_vitmin
 }
 
-db eval {insert or replace into version values('NUTsqlite 1.6',NULL)}
+db eval {insert or replace into version values('NUTsqlite 1.7',NULL)}
 db eval {delete from tcl_code}
 db eval {insert or replace into tcl_code values('Main',$Main)}
 db eval {insert or replace into tcl_code values('InitialLoad',$InitialLoad)}
