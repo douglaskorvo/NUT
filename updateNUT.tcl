@@ -3701,12 +3701,12 @@ proc RefreshWeightLog {args} {
   } else {
   set ::currentbfp 0.0
   }
- set span [db eval { select abs(min(cast (julianday(substr(wldate,1,4) || '-' || substr(wldate,5,2) || '-' || substr(wldate,7,2)) - julianday('now', 'localtime') as int))) as span from wlog where cleardate is null } ]
+ set ::span [db eval { select abs(min(cast (julianday(substr(wldate,1,4) || '-' || substr(wldate,5,2) || '-' || substr(wldate,7,2)) - julianday('now', 'localtime') as int))) from wlog where cleardate is null } ]
  set CASmode Bulking
  if {($leanslope > 0.0 && $::fatslope > 0.0) || ($wlpolarity == 0 && $::fatslope > 0.0)} {set CASmode Cutting}
  set datapoints [db eval {select count(*) from wlog where cleardate is null}]
  if {$datapoints > 1} {
-  set ::wlogsummary "Based on the trend of $datapoints data points so far...\n\nPredicted lean mass today = [expr {round(10.0 * ($::weightyintercept - $::fatyintercept)) / 10.0 }]\n\nPredicted fat mass today = $::fatyintercept\n\nIf the predictions are correct, you [expr {$leanslope >= 0.0 ? "gained" : "lost"}] [expr {abs(round($leanslope * $span * 1000.0) / 1000.0)}] lean mass over $span [expr {$span == 1 ? "day" : "days"}] and [expr {$::fatslope >= 0.0 ? "gained" : "lost"}] [expr {abs(round($::fatslope * $span * 1000.0) / 1000.0)}] fat mass.\n\n[expr {$autocal == 2 ? "Calorie Auto-Set Mode = $CASmode" : ""}]"
+  set ::wlogsummary "Based on the trend of $datapoints data points so far...\n\nPredicted lean mass today = [expr {round(10.0 * ($::weightyintercept - $::fatyintercept)) / 10.0 }]\n\nPredicted fat mass today = $::fatyintercept\n\nIf the predictions are correct, you [expr {$leanslope >= 0.0 ? "gained" : "lost"}] [expr {abs(round($leanslope * $::span * 1000.0) / 1000.0)}] lean mass over $::span [expr {$::span == 1 ? "day" : "days"}] and [expr {$::fatslope >= 0.0 ? "gained" : "lost"}] [expr {abs(round($::fatslope * $::span * 1000.0) / 1000.0)}] fat mass.\n\n[expr {$autocal == 2 ? "Calorie Auto-Set Mode = $CASmode" : ""}]"
   } else { set ::wlogsummary "" } 
  if {$datapoints == 1} {
   db eval {select weight as "::weightyintercept", bodyfat as "::currentbfp" from wlog where cleardate is null} { }
@@ -3760,7 +3760,7 @@ if {$autocal == 2} {
   db eval {update wlog set cleardate = $today where cleardate is NULL}
   set ::currentbfp [expr {round(1000.0 * $::fatyintercept / $::weightyintercept) / 10.0}]
   db eval {insert into wlog values ( $::weightyintercept, $::currentbfp, $today, NULL)}
-  db eval {update options set wltweak = 0, set wlpolarity = case when wlpolarity = 1 then 0 else 1 end}
+  db eval {update options set wltweak = 0, wlpolarity = case when wlpolarity = 1 then 0 else 1 end}
   }
  }
 
@@ -4942,6 +4942,7 @@ proc SwitchToMenu {args} {
 #grid .nut.rm.recipebutton
  set ::rmMainPane .nut.rm.frmenu
  grid $::rmMainPane
+ grid remove .nut.rm.searchcancel
  .nut.rm.recipebutton configure -state normal
  
  }
@@ -4986,7 +4987,7 @@ proc auto_cal {} {
  if {![string is double -strict $::SHORT6am]} {set short6 0.0} else {set short6 $::SHORT6am}
  if {![string is double -strict $::LONG3am]} {set long3 0.0} else {set long3 $::LONG3am}
  if {![string is double -strict $::LONG6am]} {set long6 0.0} else {set long6 $::LONG6am}
- if {$fat > 0.0} {set fa2fat [expr {($sat + $mono + $pufa + $trans) / $fat}]} else {set fa2fat 0.95}
+ if {$fat > 0.0} {set fa2fat [expr {($sat + $mono + $pufa) / $fat}]} else {set fa2fat 0.95}
  
  if {$::ENERC_KCALopt == 0.0 && $::PROCNTopt == 0.0} {set newdv $::PROCNTdv_default} elseif {$::PROCNTopt == 0.0} {set newdv [expr {$::ENERC_KCALdv / 2000.0 * $::PROCNTdv_default}]} elseif {$::PROCNTopt == -1.0 && [string is double -strict $::PROCNTam] && $::PROCNTam > 0.0} {set newdv $::PROCNTam} elseif {$::PROCNTopt > 0.0} {set newdv $::PROCNTopt}
  set newdv [expr {round(10.0 * $newdv) / 10.0}]
@@ -5025,7 +5026,7 @@ proc auto_cal {} {
  set short6 [expr {$short6 / $pufareductionfactor}]
  set long6 [expr {$long6 / $pufareductionfactor}]
  
- set newdv [expr {($::FATdv * $fa2fat) - $::FASATdv - $::FAPUdv - $trans}]
+ set newdv [expr {($::FATdv * $fa2fat) - $::FASATdv - $::FAPUdv}]
  set newdv [expr {round(10.0 * $newdv) / 10.0}]
  if {$newdv != $::FAMSdv} {set ::FAMSdv $newdv}
  
@@ -5202,7 +5203,7 @@ proc n6hufa {short3 short6 long3 long6 sat mono trans pufa cals float} {
  set p6 [expr { 900.0 * $short6 / $cals }]
  set h3 [expr { 900.0 * $long3 / $cals }]
  set h6 [expr { 900.0 * $long6 / $cals }]
- set o  [expr { 900.0 * ($sat + $mono + $trans + $pufa - $short3 - $short6 - $long3 - $long6) / $cals }]
+ set o  [expr { 900.0 * ($sat + $mono + $pufa - $short3 - $short6 - $long3 - $long6) / $cals }]
  if { $p6 == 0.0 } {set p6 0.000000001}
  if { $h6 == 0.0 } {set h6 0.000000001}
  set answer [db eval {select 100.0 / (1.0 + 0.0441/$p6 * (1.0 + $p3/0.0555 + $h3/0.005 + $o/5.0 + $p6/0.175)) + 100.0 / (1.0 + 0.7/$h6 * (1.0 + $h3/3.0))}]
@@ -5537,7 +5538,7 @@ proc changedv_vitmin {nut} {
 #end changedv_vitmin
 }
 
-db eval {insert or replace into version values('NUTsqlite 1.9.2',NULL)}
+db eval {insert or replace into version values('NUTsqlite 1.9.3',NULL)}
 db eval {delete from tcl_code}
 db eval {insert or replace into tcl_code values('Main',$Main)}
 db eval {insert or replace into tcl_code values('InitialLoad',$InitialLoad)}

@@ -1,3 +1,15 @@
+2015-06-13 NUTsqlite-1.9.3 released.
+
+2015-06-13 Changed proc AcceptNewMeasurements.  wlpolarity not being changed
+           due to coding error.  Upshot would be that user continually loses
+           weight unto frailty although bodyfat percentage improves markedly.
+           This bug was only seen when using the calorie auto-set feature.  
+
+2015-02-06 Changed proc n6hufa.  It was counting trans fats twice.  Left trans
+           in the argument list to avoid making users have to reload the 
+           database to recreate the views.  This error is insignificant because
+           it can only slightly change essential fatty acid daily values.
+
 2015-01-08 NUTsqlite-1.9.2 released.
 
 2015-01-08 In proc SetDefanalLater, the attempt to change to a watch cursor and

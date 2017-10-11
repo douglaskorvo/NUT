@@ -102,7 +102,7 @@ get a fairly recent overview of nutritional quality and adherence to plan.
 <P>
 "Record Meals & Recipes" is where meals are planned or else simply recorded if
 unplanned.  
-A slider can be either be moved directly or else clicked 
+A slider can  either be moved directly or else clicked 
  on the 
 left or right to move backward or forward to get to the
 current meal.
@@ -172,7 +172,7 @@ For the program analysis to come out right you must record
 all the meals the program is set for.
 For instance, if 
 <B>NUT</B>
-set for three meals a day, and
+is set for three meals a day, and
 you eat more than three, combine them into three; if you eat less than three, 
 record some minimal item such as an ounce of water for each missing meal.
 In this way, even if you take breaks from recording,
@@ -265,7 +265,20 @@ calorie values, not any modifications you may have made from
 "Personal Options", so that they will match the nutrition labels; however,
 nutrient values can always be entered in grams.   When you "Save" this new recipe, it becomes just like any other food in the database.
 <P>
-Another use for "Save as a Recipe":  Use it to quickly delete an entire meal,
+A non-obvious use for recipes is to add a new serving size to an
+existing food to make portion control easier.  Take one of my favorites, a
+roasted chicken wing.  The meat weighs 34 grams in an average wing
+but there is 40% refuse, meaning
+that the wing weighed on the bone comes to almost 57 grams (34 / 0.6).  So, you can make
+a recipe that is just a duplicate of the food with a slightly different name,
+but with a serving unit of "grams weighed with refuse" and the number of serving
+units in one serving is 56.67.  
+Then, at mealtime, if you need strict portion control, you go
+to "View Foods" and set a number of servings corresponding to the weight of
+the wings on the bone and add it to the meal, and only the weight of the meat
+ shows up in the meal.
+<P>
+Yet another use for "Save as a Recipe":  Use it to quickly delete an entire meal,
 and then cancel the recipe.
 <P>
 <B>VIEW FOODS</B>
@@ -328,21 +341,6 @@ over the imaginary line between the program settings and the weight log columns,
 there will appear a double arrow that you can click and drag to the left to
 bring the weight log column into full view.)
 <P>
-Calorie "Auto-Set" means that you will eating according to the calorie level that
-<B>NUT</B>
-shows and also recording your weight and bodyfat percentage daily.
-<B>NUT</B>
-can then determine how best to move the calorie level to achieve gains in
-lean mass and loss of fat mass.  
-<B>NUT</B>
-will move calories by a maximum of 20 calories a day.
-If a Calorie "Auto-Set" cycle goes on for over a month, 
-more than 30 or 40 data points, this indicates that at the present time,
-<B>NUT</B>
-has achieved all it is going to achieve and you can turn off the
-Calorie Auto-Set feature, clear the weight log, and
-start over if you still want to use the feature.
-<P>
 <B>NUT</B>
 records daily weight and bodyfat percentage measurements
 and uses linear regression to filter out the random noise and show the actual
@@ -375,39 +373,41 @@ samples, the stronger the signal.  This way you can find out more quickly that a
 particular strategy just isn't working.  Also, you can become more aware of
 weight loss strategies that work by reducing lean mass instead of fat mass.
 <P>
+Calorie "Auto-Set" means that you will eat according to the calorie level that
+<B>NUT</B>
+shows and also record your weight and bodyfat percentage daily.
+<B>NUT</B>
+can then determine how best to move the calorie level to achieve gains in
+lean mass and loss of fat mass.  
+<B>NUT</B>
+will move calories by a maximum of 20 calories a day.
+If both lean mass and fat mass are trending down, 
+<B>NUT</B> 
+raises calories; if both lean mass and fat mass are trending up,
+<B>NUT</B>
+lowers calories.  When fat mass is trending up and lean mass is trending
+down, 
+<B>NUT</B> alternates between
+a cycle to prevent fat mass gain and a cycle to prevent lean mass loss.
+A cycle ends when fat mass is trending down and lean mass is trending up, and when a
+cycle begins with these favorable trends, it is allowed to continue.
+<P>
 If you are not using the Calorie Auto-Set
 feature, you can clear the weight log whenever you like; the usual reason would
 be that you have started a new strategy and therefore want to see the new
 trend.   For instance, I tend to make five to seven days of measurements, check the numbers, move calories up or down as required, and then clear the weight log when I am trying to find the right calorie level for my latest experiment. The last weight log entry is always retained after clearing the weight log to enable a quicker start to the next cycle of logging.
-<P>
-With the Calorie Auto-Set feature, everything works the same, but 
-<B>NUT</B>
-decides 
-whether to move the calories up or down.
 <P>
 So, should you use the Weight Log manually or use the Calorie Auto-Set feature?
 I think the Calorie Auto-Set feature is best when you really do have to cut
 calories and would rather delegate the responsibility to 
 <B>NUT</B>
 to avoid the psychological torture of having to cut yourself back.  
-Also, by using the Auto-Set feature, as a passive recipient of whatever calorie level is doled out, it can become clearer what different calorie 
-levels
-feel like in terms of hunger level, mood, physical enthusiasm, etc.  But do
+And
+<B>NUT</B> can slowly improve your body composition without you having to
+really think about it.
+But do
 remember that you can always turn the feature off and refine your strategy if
 there is excessive hunger or other problems.
-<P>
-Using the
-Weight Log feature manually is best when you want to maintain an ideal
-weight and you already know how to do it. Remember that you can always gain
-lean mass if you are willing to gain a lot of fat mass, and that you can always
-lose fat mass if you are willing to lose a lot of lean mass.  What you are
-really looking for is the middle ground, where a
-change in calories impacts lean and fat about the same, and where your body
- feels most comfortable with itself.  
-You are looking for the diet with satisfying food choices that 
-naturally results in no
-weight gain without having to limit yourself.
-Steady weight loss is best with a calorie level only slightly below what you need, not a massive and unsustainable slashing of calories.
 <P>
 <B>THE STORY</B>
 <P>
@@ -510,6 +510,17 @@ sqlite> delete from food_des where NDB_No = 99008;
 sqlite> delete from weight where NDB_No = 99008;
 </B></PRE>   
 <P>
+Hopefully you will never need to do this, but it is possible that
+automatic portion control could write a completely awry meal that
+<B>NUT</B>
+is unable to analyze when it tries to come up.  The only recourse 
+then is to delete the meal
+from the database using the meal_date and meal number like this:
+<P>
+<B><PRE>
+sqlite> delete from meal_foods where meal_date = 20150413 and meal = 3;
+</B></PRE>   
+<P>
 Here's an interesting factoid about the Calorie Auto-Set feature:
 it alternates between a cycle that tries to lower fat mass and a cycle that
 tries to increase lean mass.  Which cycle are we in now?  The answer is
@@ -576,12 +587,54 @@ sqlite> insert into cost values (11251, 0.25841296, 'Smart & Final');
 </B></PRE>
 <P>
 This says that 100 grams of romaine lettuce costs about $0.25 when bought from Smart & Final.
-Here's how I find my actual cost per meal for my last two meals:
+Here's how I find my actual cost per day for the last week:
 <P>
 <B><PRE>
-sqlite> select meal_date * 100 + meal as meal_id, sum(cost * mhectograms) from mealfoods join cost on mealfoods.NDB_No = cost.NDB_No group by meal_id order by meal_id desc limit 2;
-2014112202|3.16653086590675
-2014112201|3.50747248718349
+sqlite> select meal_date, round(sum(mhectograms * cost),2) from mealfoods natural join food_des natural join cost group by meal_date order by meal_date desc limit 7;
+20150224|10.32
+20150223|10.16
+20150222|10.74
+20150221|10.04
+20150220|10.84
+20150219|10.6
+20150218|10.84
+</B></PRE>
+<P>
+A "natural join" means you don't have to specify the columns you are using for
+a join between tables, and the database has been set up so that natural joins 
+will
+work most of the time to get useful results.
+Here's how I find which of the foods I buy is the cheapest source of copper (see below for how I know the copper column is named "CU"):
+<P>
+<B><PRE>
+sqlite> select Shrt_Desc, cost / CU as val from cost natural join food_des where val is not null order by val limit 1;
+Seeds, sunflower seed kernels, dried (helianthus annuus)|0.332843857072932
+</B></PRE>
+<P>
+In the same vein, although not joinable to the other tables because it
+allows non-food items, if I need
+a shopping list:
+<P>
+<B><PRE>
+sqlite> .schema shopping
+CREATE TABLE shopping (n integer primary key, item text);
+sqlite> insert into shopping values (null, 'radishes');
+sqlite> insert into shopping values (null, 'salmon');
+sqlite> select * from shopping;
+1|radishes
+2|salmon
+</B></PRE>
+<P>
+Now a food question relevant to ketogenic diets:  How do the lettuces rate for
+maximum potassium per gram of non-fiber carb?
+<P>
+<B><PRE>
+sqlite> select NDB_No, Shrt_Desc, round(K / CHO_NONFIB) as val from food_des where Long_Desc like '%lettuce%' order by val desc limit 5;
+11250|Lettuce,butterhead (incl boston&bibb types),raw|211.0
+11251|Lettuce, cos or romaine, raw (lactuca sativa var. logifolia)|208.0
+11257|Lettuce, red leaf, raw (lactuca sativa var. crispa)|138.0
+11253|Lettuce, green leaf, raw (lactuca sativa var. crispa)|124.0
+11252|Lettuce,iceberg (incl crisphead types),raw|80.0
 </B></PRE>
 <P>
 The next query concerns how non-fiber carb has varied in my diet, but I
@@ -642,7 +695,8 @@ sqlite> select meal_id / 10000, avg(CHO_NONFIB) * 3 from meals group by meal_id 
 </B></PRE>
 <P>
 To tie it all together, let's join this result to the wlog table to answer the question "How did my lean mass vary with these monthly
-carb levels?"
+carb levels?"  Because I am joining on a customized date representation, I can't use a
+natural join, and I have to spell out the whole syntax for joins to specify what is going to be equal to what:
 <P>                                                          
 <B><PRE>
 sqlite> select m.meal_id / 10000, avg(m.CHO_NONFIB) * 3, avg(w.weight - w.weight * w.bodyfat / 100) from meals m join wlog w on m.meal_id / 10000 = w.wldate / 100 group by m.meal_id / 10000;
