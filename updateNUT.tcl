@@ -188,10 +188,10 @@ set ::lastbubble 0
 set ::BubbleMachineStatus 0
 
 set ::realmealchange 0
-grid [scale .nut.rm.scale -background "#FF9428" -width [expr {$::magnify * 11}] -sliderlength [expr {$::magnify * 20}] -length [expr {10 + ($::column15 * 4)}] -showvalue 0 -orient horizontal -variable ::mealoffset -from -100 -to 100 -command mealchange] -row 0 -rowspan 2 -column 0 -columnspan 4 -sticky we
+grid [scale .nut.rm.scale -background "#FF9428" -width [expr {$::magnify * 11}] -sliderlength [expr {$::magnify * 20}] -length [expr {10 + ($::column15 * 4)}] -showvalue 0 -orient horizontal -variable ::mealoffset -from -100 -to 100 -command mealchange] -row 0 -rowspan 2 -column 0 -columnspan 4 -sticky w
 
 grid [ttk::menubutton .nut.rm.theusual -style meal.TMenubutton -text "Customary Meals" -direction right -menu .nut.rm.theusual.m] -row 2 -column 0 -columnspan 4 -sticky nsw
-grid [ttk::button .nut.rm.recipebutton -style ar.TButton -width 16 -text "Save as a Recipe" -state disabled -command RecipeSaveAs] -row 3 -rowspan 2 -column 0 -columnspan 2 -pady [expr {$::magnify * 5.0}] -sticky e
+grid [ttk::button .nut.rm.recipebutton -style ar.TButton -width 16 -text "Save as a Recipe" -state disabled -command RecipeSaveAs] -row 3 -rowspan 2 -column 0 -columnspan 2 -pady [expr {$::magnify * 5.0}] -sticky w
 menu .nut.rm.theusual.m -background "#FF9428" -tearoff 0 -postcommand theusualPopulateMenu
 .nut.rm.theusual.m add cascade -label "Add Customary Meal to this meal" -menu .nut.rm.theusual.m.add -background "#FF9428"
 .nut.rm.theusual.m add cascade -label "Save this meal as a Customary Meal" -menu .nut.rm.theusual.m.save -background "#FF9428"
@@ -762,7 +762,7 @@ eval $code
  } else {
  set tablename [db eval {select name from sqlite_master where type='table' and name = "nutr_def"}]
  if { $tablename == "" } {
-  tk_messageBox -type ok -title $::version -message "NUT requires the USDA Nutrient Database to be present initially in order to be loaded into SQLite.  Download it in the full ascii version from \"http://www.ars.usda.gov/nutrientdata\" or from \"http://nut.sourceforge.net\" and unzip it in this directory, [pwd]." -detail "Follow this same procedure later when you want to upgrade the USDA database yet retain your personal data.  After USDA files have been loaded into NUT they can be deleted."
+  tk_messageBox -type ok -title $::version -message "NUT requires the USDA Nutrient Database to be present initially in order to be loaded into SQLite.  Download it in the full ascii version from \"http://www.ars.usda.gov/nutrientdata\" or from \"http://nut.sourceforge.net\" and unzip it in this directory, [pwd]." -detail "Follow this same procedure later when you want to upgrade the USDA database yet retain your personal data.  After USDA files have been loaded into NUT they can be deleted.\n\nIf you really do want to reload a USDA database that you have already loaded, rename the file \"NUTR_DEF.txt.loaded\" to \"NUTR_DEF.txt\"."
   rename unknown ""
   rename _original_unknown unknown
   destroy .
@@ -833,11 +833,27 @@ $db eval {COMMIT}
 set InitialLoad {
 
 sqlite3 dbmem :memory:
-dbmem restore main $DiskDB
-dbmem eval {PRAGMA synchronous = 0}
 dbmem function n6hufa n6hufa
 dbmem function setRefDesc setRefDesc
 dbmem function format_meal_id format_meal_id
+
+if {[catch {dbmem restore main $DiskDB}]} {
+
+# Duplicate the schema of appdata1.xyz into the in-memory db database
+
+ db eval {SELECT sql FROM sqlite_master WHERE sql NOT NULL and type = 'table' and name not like '%sqlite_%'} {
+  dbmem eval $sql
+  }
+
+# Copy data content from appdata1.xyz into memory
+ dbmem eval {ATTACH $::DiskDB AS app}
+ dbmem eval {SELECT name FROM sqlite_master WHERE type='table'} {
+  dbmem eval "INSERT INTO $name SELECT * FROM app.$name"
+  }
+ dbmem eval {DETACH app}
+ }
+
+dbmem eval {PRAGMA synchronous = 0}
 
 dbmem progress 1920 {pbprog 1 1.0 }
 dbmem eval {create temp table ttnutr_def( Nutr_No text, Units text, Tagname text, NutrDesc text, Num_Dec text, SR_Order int)}
@@ -1358,7 +1374,27 @@ dbmem progress 0 ""
 set ::pbar(8) 80.0
 update
 dbmem eval {PRAGMA synchronous = 2}
-dbmem backup main $DiskDB
+if {[catch {dbmem backup main $DiskDB}]} {
+
+# Duplicate the schema of appdata1.xyz from the in-memory db database
+ set sql_mast [db eval {SELECT name, type FROM sqlite_master where type != 'index'}]
+ foreach {name type} $sql_mast {
+  db eval "DROP $type if exists $name"
+  }
+ dbmem eval {SELECT sql FROM sqlite_master WHERE sql NOT NULL and type != 'trigger'} {
+  db eval $sql
+  }
+
+# Copy data content into appdata1.xyz from memory
+ dbmem eval {ATTACH $DiskDB AS app}
+ dbmem eval {SELECT name FROM sqlite_master WHERE type='table'} {
+  dbmem eval "INSERT INTO app.$name SELECT * FROM $name"
+  }
+ dbmem eval {SELECT sql FROM sqlite_master WHERE sql NOT NULL and type = 'trigger'} {
+  db eval $sql
+  }
+ dbmem eval {DETACH app}
+ }
 dbmem close
 set ::pbar(8) 90.0
 update
@@ -3734,7 +3770,7 @@ proc RefreshMealfoodQuantities {args} {
   set this_meal_date [expr {$::currentmeal / 100}]
   set this_meal [expr {$::currentmeal % 100}]
   set selectstring "select * from ("
-  set viewstring "drop view if exists pcf; create view pcf as select * from ("
+  set viewstring "drop view if exists pcf; create temp view pcf as select * from ("
   db eval {select NDB_No from mealfoods where meal_date = $this_meal_date and meal = $this_meal} {
    if {$::GRAMSopt} {
     append selectstring "(select cast (round(mhectograms * 100.0) as integer) as \"::${NDB_No}\" from mealfoods where NDB_No = $NDB_No and meal_date = $this_meal_date and meal = $this_meal), "
@@ -4700,7 +4736,7 @@ if {$count > 0} {
  tk_messageBox -type ok -title $::version -message "This recipe name is a duplicate of a food name in the table."
  return
  }
-if {![string is double $::RecipeServNum]} {
+if {![string is double -strict $::RecipeServNum]} {
  tk_messageBox -type ok -title $::version -message "\"Number of servings recipe makes\" must be a decimal number greater than zero."
  return
  } elseif {$::RecipeServNum <= 0.0} {
@@ -4711,14 +4747,14 @@ if {$::RecipeServUnit == {}} {
  tk_messageBox -type ok -title $::version -message "The \"Serving Unit\" must not be blank."
  return
  }
-if {![string is double $::RecipeServUnitNum]} {
+if {![string is double -strict $::RecipeServUnitNum]} {
  tk_messageBox -type ok -title $::version -message "\"Number of units in one serving\" must be a decimal number greater than zero."
  return
  } elseif {$::RecipeServUnitNum <= 0.0} {
  tk_messageBox -type ok -title $::version -message "\"Number of units in one serving\" must be a decimal number greater than zero."
  return
  }
-if {[string is double $::RecipeServWeight]} {
+if {[string is double -strict $::RecipeServWeight]} {
  if {$::GRAMSopt} {
   set newweight [expr {$::RecipeServWeight * $::RecipeServNum / 100.0}]
   } else {
@@ -4876,7 +4912,7 @@ proc SwitchToAnalysis {args} {
  grid remove $::rmMainPane
  grid remove .nut.rm.grams
  grid remove .nut.rm.ounces
- grid remove .nut.rm.recipebutton
+#grid remove .nut.rm.recipebutton
  set ::rmMainPane .nut.rm.nbw
  grid $::rmMainPane
  
@@ -4893,7 +4929,7 @@ proc SwitchToMenu {args} {
  grid remove $::rmMainPane
  grid .nut.rm.grams
  grid .nut.rm.ounces
- grid .nut.rm.recipebutton
+#grid .nut.rm.recipebutton
  set ::rmMainPane .nut.rm.frmenu
  grid $::rmMainPane
  .nut.rm.recipebutton configure -state normal
@@ -5487,7 +5523,7 @@ proc changedv_vitmin {nut} {
 #end changedv_vitmin
 }
 
-db eval {insert or replace into version values('NUTsqlite 1.4',NULL)}
+db eval {insert or replace into version values('NUTsqlite 1.5',NULL)}
 db eval {delete from tcl_code}
 db eval {insert or replace into tcl_code values('Main',$Main)}
 db eval {insert or replace into tcl_code values('InitialLoad',$InitialLoad)}
@@ -5564,3 +5600,29 @@ db eval {insert or replace into tcl_code values('monoright',$monoright)}
 db eval {insert or replace into tcl_code values('rank2vf',$rank2vf)}
 db eval {insert or replace into tcl_code values('rm2vf',$rm2vf)}
 db eval {insert or replace into tcl_code values('changedv_vitmin',$changedv_vitmin)}
+
+package require Tk
+
+wm geometry . 1x1
+set appSize 1.0
+set ::magnify [expr {[winfo vrootheight .] / 711.0}]
+if {[string is double -strict $appSize] && $appSize > 0.0} {
+ set ::magnify [expr {$::magnify * $appSize}]
+ }
+if {$appSize == 0.0} {set ::magnify 1.0}
+foreach font [font names] {
+ font configure $font -size [expr {int($::magnify * [font configure $font -size]
+)}]
+ }
+set i [font measure TkDefaultFont -displayof . "  TransMonoenoic  "]
+set ::column18 [expr {int(round($i / 3.0))}]                      
+set ::column15 [expr {int(round(2.0 * $i / 5.0))}]
+option add *Dialog.msg.wrapLength [expr {400 * $::magnify}]
+option add *Dialog.dtl.wrapLength [expr {400 * $::magnify}]
+ttk::style configure lf.Horizontal.TProgressbar -background "#006400"
+
+db eval {select max(version) as "::version" from version} { }
+
+tk_messageBox -type ok -title "NUTsqlite Code Update Completion" -message "There\'s a signpost up ahead.\n\nNext stop:  ${::version}"
+exit 0
+

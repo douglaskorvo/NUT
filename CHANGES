@@ -1,3 +1,22 @@
+2014-09-30 NUTsqlite-1.5 released.
+
+2014-09-30 Added goofy acknowledgement message after updateNUT.tcl processing.
+
+2014-09-30 Fixed the meal choice scale and food search widgets from changing
+           their positions when going from meal to analysis in record meals.
+
+2014-09-29 View pcf changed to temp.  Although NUT wasn't designed to work to
+           with multiple instances sharing the same db, they shouldn't actively
+           interfere if it can be helped, and pcf view won't be shared if it's
+           temp.
+
+2014-09-29 Heh heh, RecipeDone still doesn't work right.  Made random changes in
+           hopes it will start to work.  My usual superficial testing confirms
+           it may work, but maybe not.
+
+2014-09-27 Added code to work with older Tcl/Tk/SQLite installations circa 2009
+           that don't have SQLite restore and backup commands.
+
 2014-09-26 NUTsqlite-1.4 released.
 
 2014-09-26 Speeded up automatic portion control by making it a single SQL
