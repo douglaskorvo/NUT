@@ -60,7 +60,7 @@ package require Tk
 set DiskDB [file nativename $DiskDB]
 
 db eval {select max(version) as "::version" from version} { }
-
+set ::scrollwidth 8
 set ::magnify [expr {[winfo vrootheight .] / 711.0}]
 if {[string is double -strict $appSize] && $appSize > 0.0} {
  set ::magnify [expr {$::magnify * $appSize}]
@@ -217,8 +217,8 @@ grid [ttk::button .nut.rm.searchcancel -text "Cancel" -width 6 -command CancelSe
 grid remove .nut.rm.searchcancel
 grid [ttk::frame .nut.rm.frlistbox -style rm.TFrame -width [expr {15 * $::column15}] ] -row 5 -rowspan 16 -column 0 -columnspan 15 -sticky nswe
 grid [tk::listbox .nut.rm.frlistbox.listbox -listvariable foodsrm -yscrollcommand ".nut.rm.frlistbox.scrollv set" -xscrollcommand ".nut.rm.frlistbox.scrollh set" -height 22 -width 85 -background "#FF7F00" -setgrid 1] -row 0 -column 0 -sticky nsew
-grid [scrollbar .nut.rm.frlistbox.scrollv -width [expr {$::magnify * 5}] -relief sunken -orient vertical -command ".nut.rm.frlistbox.listbox yview"] -row 0 -column 1 -sticky nsew
-grid [scrollbar .nut.rm.frlistbox.scrollh -width [expr {$::magnify * 5}] -relief sunken -orient horizontal -command ".nut.rm.frlistbox.listbox xview"] -row 1 -column 0 -sticky nswe
+grid [scrollbar .nut.rm.frlistbox.scrollv -width [expr {$::magnify * $::scrollwidth}] -relief sunken -orient vertical -command ".nut.rm.frlistbox.listbox yview"] -row 0 -column 1 -sticky nsew
+grid [scrollbar .nut.rm.frlistbox.scrollh -width [expr {$::magnify * $::scrollwidth}] -relief sunken -orient horizontal -command ".nut.rm.frlistbox.listbox xview"] -row 1 -column 0 -sticky nswe
 grid rowconfig .nut.rm.frlistbox 0 -weight 1 -minsize 0
 grid columnconfig .nut.rm.frlistbox 0 -weight 1 -minsize 0
 grid propagate .nut.rm.frlistbox 0
@@ -371,7 +371,7 @@ grid [ttk::treeview .nut.ts.frranking.ranking -yscrollcommand [list .nut.ts.frra
 .nut.ts.frranking.ranking column 0 -minwidth [expr {10 * $::column15}]
 .nut.ts.frranking.ranking column 1 -minwidth [expr {2 * $::column15}]
 .nut.ts.frranking.ranking column 2 -minwidth [expr {3 * $::column15}]
-grid [scrollbar .nut.ts.frranking.vsb -width [expr {$::magnify * 5}] -relief sunken -orient vertical -command [list .nut.ts.frranking.ranking yview]] -row 0 -column 1 -sticky nsew
+grid [scrollbar .nut.ts.frranking.vsb -width [expr {$::magnify * $::scrollwidth}] -relief sunken -orient vertical -command [list .nut.ts.frranking.ranking yview]] -row 0 -column 1 -sticky nsew
 
 grid columnconfigure .nut.ts.frranking 0 -weight 1 -minsize 0
 grid rowconfigure .nut.ts.frranking 0 -weight 1 -minsize 0
@@ -397,8 +397,8 @@ bind .nut <<NotebookTabChanged>> NutTabChange
 grid [ttk::frame .nut.vf.frlistbox -style vf.TFrame -width [expr {15 * $::column15}] ] -row 5 -rowspan 16 -column 0 -columnspan 15 -sticky nsew
 grid propagate .nut.vf.frlistbox 0
 grid [tk::listbox .nut.vf.frlistbox.listbox -width 85 -height 22 -listvariable foodsvf -yscrollcommand ".nut.vf.frlistbox.scrollv set" -xscrollcommand ".nut.vf.frlistbox.scrollh set" -background "#00FF00" -setgrid 1] -row 0 -column 0 -sticky nsew
-grid [scrollbar .nut.vf.frlistbox.scrollv -width [expr {$::magnify * 5}] -relief sunken -orient vertical -command ".nut.vf.frlistbox.listbox yview"] -row 0 -column 1 -sticky nsew
-grid [scrollbar .nut.vf.frlistbox.scrollh -width [expr {$::magnify * 5}] -relief sunken -orient horizontal -command ".nut.vf.frlistbox.listbox xview"] -row 1 -column 0 -sticky nswe
+grid [scrollbar .nut.vf.frlistbox.scrollv -width [expr {$::magnify * $::scrollwidth}] -relief sunken -orient vertical -command ".nut.vf.frlistbox.listbox yview"] -row 0 -column 1 -sticky nsew
+grid [scrollbar .nut.vf.frlistbox.scrollh -width [expr {$::magnify * $::scrollwidth}] -relief sunken -orient horizontal -command ".nut.vf.frlistbox.listbox xview"] -row 1 -column 0 -sticky nswe
 grid rowconfig .nut.vf.frlistbox 0 -weight 1 -minsize 0
 grid columnconfig .nut.vf.frlistbox 0 -weight 1 -minsize 0
 bind .nut.vf.frlistbox.listbox <<ListboxSelect>> FoodChoicevf
@@ -407,7 +407,7 @@ grid remove .nut.vf.frlistbox
 grid [ttk::frame .nut.rm.frmenu -style rm.TFrame -width [expr {15 * $::column15}] ] -row 5 -rowspan 16 -column 0 -columnspan 15
 grid propagate .nut.rm.frmenu 0
 grid [tk::text .nut.rm.frmenu.menu -yscrollcommand ".nut.rm.frmenu.scrollv set" -state disabled -wrap none -height 32 -width 99 -inactiveselectbackground {} -background "#FF7F00" -cursor [. cget -cursor] ] -row 0 -column 0 -sticky nsew
-grid [scrollbar .nut.rm.frmenu.scrollv -width [expr {$::magnify * 5}] -relief sunken -orient vertical -command ".nut.rm.frmenu.menu yview"] -row 0 -column 1 -sticky nsew
+grid [scrollbar .nut.rm.frmenu.scrollv -width [expr {$::magnify * $::scrollwidth}] -relief sunken -orient vertical -command ".nut.rm.frmenu.menu yview"] -row 0 -column 1 -sticky nsew
 grid rowconfig .nut.rm.frmenu 0 -weight 1 -minsize 0
 grid columnconfig .nut.rm.frmenu 0 -weight 1 -minsize 0
 
@@ -3629,6 +3629,7 @@ if {[winfo vrootheight .] * $gr > [winfo vrootwidth .]} {
  set vrootwGR [expr {int([winfo vrootheight .] * $gr)}]
  }
 set ::magnify [expr {$appSize / 1.3 * $vroothGR / 500.0}]
+set ::scrollwidth 8
 foreach font [font names] {
  font configure $font -size [expr {int($::magnify * [font configure $font -size])}]
  }
@@ -3825,8 +3826,8 @@ ttk::frame .nut.rm.frlistbox -style rm.TFrame
 #place .nut.rm.frlistbox -relx 0.0 -rely 0.25 -relheight 0.75 -relwidth 1.0
 grid propagate .nut.rm.frlistbox 0
 grid [tk::listbox .nut.rm.frlistbox.listbox -listvariable foodsrm -yscrollcommand ".nut.rm.frlistbox.scrollv set" -xscrollcommand ".nut.rm.frlistbox.scrollh set" -background "#FF7F00" ] -row 0 -column 0 -sticky nsew
-grid [scrollbar .nut.rm.frlistbox.scrollv -width [expr {$::magnify * 5}] -relief sunken -orient vertical -command ".nut.rm.frlistbox.listbox yview"] -row 0 -column 1 -sticky nsew
-grid [scrollbar .nut.rm.frlistbox.scrollh -width [expr {$::magnify * 5}] -relief sunken -orient horizontal -command ".nut.rm.frlistbox.listbox xview"] -row 1 -column 0 -sticky nswe
+grid [scrollbar .nut.rm.frlistbox.scrollv -width [expr {$::magnify * $::scrollwidth}] -relief sunken -orient vertical -command ".nut.rm.frlistbox.listbox yview"] -row 0 -column 1 -sticky nsew
+grid [scrollbar .nut.rm.frlistbox.scrollh -width [expr {$::magnify * $::scrollwidth}] -relief sunken -orient horizontal -command ".nut.rm.frlistbox.listbox xview"] -row 1 -column 0 -sticky nswe
 grid rowconfig .nut.rm.frlistbox 0 -weight 1 -minsize 0
 grid columnconfig .nut.rm.frlistbox 0 -weight 1 -minsize 0
 
@@ -3838,7 +3839,7 @@ ttk::frame .nut.rm.frmenu -style rm.TFrame
 #place .nut.rm.frmenu -relx 0.0 -rely 0.25 -relheight 0.75 -relwidth 1.0
 grid propagate .nut.rm.frmenu 0
 grid [tk::text .nut.rm.frmenu.menu -yscrollcommand ".nut.rm.frmenu.scrollv set" -state disabled -wrap none -inactiveselectbackground {} -background "#FF7F00" -cursor [. cget -cursor] ] -row 0 -column 0 -sticky nsew
-grid [scrollbar .nut.rm.frmenu.scrollv -width [expr {$::magnify * 5}] -relief sunken -orient vertical -command ".nut.rm.frmenu.menu yview"] -row 0 -column 1 -sticky nsew
+grid [scrollbar .nut.rm.frmenu.scrollv -width [expr {$::magnify * $::scrollwidth}] -relief sunken -orient vertical -command ".nut.rm.frmenu.menu yview"] -row 0 -column 1 -sticky nsew
 grid rowconfig .nut.rm.frmenu 0 -weight 1 -minsize 0
 grid columnconfig .nut.rm.frmenu 0 -weight 1 -minsize 0
 
@@ -3882,8 +3883,8 @@ ttk::frame .nut.vf.frlistbox -style vf.TFrame
 #place .nut.vf.frlistbox -relx 0.0 -rely 0.25 -relheight 0.75 -relwidth 1.0
 grid propagate .nut.vf.frlistbox 0
 grid [tk::listbox .nut.vf.frlistbox.listbox -width 85 -height 22 -listvariable foodsvf -yscrollcommand ".nut.vf.frlistbox.scrollv set" -xscrollcommand ".nut.vf.frlistbox.scrollh set" -background "#00FF00" ] -row 0 -column 0 -sticky nsew
-grid [scrollbar .nut.vf.frlistbox.scrollv -width [expr {$::magnify * 5}] -relief sunken -orient vertical -command ".nut.vf.frlistbox.listbox yview"] -row 0 -column 1 -sticky nsew
-grid [scrollbar .nut.vf.frlistbox.scrollh -width [expr {$::magnify * 5}] -relief sunken -orient horizontal -command ".nut.vf.frlistbox.listbox xview"] -row 1 -column 0 -sticky nswe
+grid [scrollbar .nut.vf.frlistbox.scrollv -width [expr {$::magnify * $::scrollwidth}] -relief sunken -orient vertical -command ".nut.vf.frlistbox.listbox yview"] -row 0 -column 1 -sticky nsew
+grid [scrollbar .nut.vf.frlistbox.scrollh -width [expr {$::magnify * $::scrollwidth}] -relief sunken -orient horizontal -command ".nut.vf.frlistbox.listbox xview"] -row 1 -column 0 -sticky nswe
 grid rowconfig .nut.vf.frlistbox 0 -weight 1 -minsize 0
 grid columnconfig .nut.vf.frlistbox 0 -weight 1 -minsize 0
 bind .nut.vf.frlistbox.listbox <<ListboxSelect>> FoodChoicevf
@@ -4059,7 +4060,7 @@ grid [ttk::treeview .nut.ts.frranking.ranking -yscrollcommand [list .nut.ts.frra
 .nut.ts.frranking.ranking column 0 -minwidth [expr {int(10 * $vrootwGR * $appSize / 1.3 / 15)}]
 .nut.ts.frranking.ranking column 1 -minwidth [expr {int(2 * $vrootwGR * $appSize / 1.3 / 15)}]
 .nut.ts.frranking.ranking column 2 -minwidth [expr {int(3 * $vrootwGR * $appSize / 1.3 / 15)}]
-grid [scrollbar .nut.ts.frranking.vsb -width [expr {$::magnify * 5}] -relief sunken -orient vertical -command [list .nut.ts.frranking.ranking yview]] -row 0 -column 1 -sticky nsew
+grid [scrollbar .nut.ts.frranking.vsb -width [expr {$::magnify * $::scrollwidth}] -relief sunken -orient vertical -command [list .nut.ts.frranking.ranking yview]] -row 0 -column 1 -sticky nsew
 
 grid columnconfigure .nut.ts.frranking 0 -weight 1 -minsize 0
 grid rowconfigure .nut.ts.frranking 0 -weight 1 -minsize 0
