@@ -3918,7 +3918,7 @@ button .nut.po.pane.wlogframe.accept -text "Accept New\nMeasurements" -command A
 place .nut.po.pane.wlogframe.accept -relx 0.36 -rely 0.2 -relheight 0.1 -relwidth 0.55
 
 label .nut.po.pane.wlogframe.summary -wraplength [expr {$::magnify * 150}] -textvariable ::wlogsummary -justify right -anchor ne -background "#5454FF" -foreground "#FFFF00"
-place .nut.po.pane.wlogframe.summary -relx 0.0 -rely 0.34 -relheight 0.5 -relwidth 0.93
+place .nut.po.pane.wlogframe.summary -relx 0.0 -rely 0.34 -relheight 0.6 -relwidth 0.93
 
 button .nut.po.pane.wlogframe.clear -text "Clear Weight Log" -command ClearWeightLog
 #place .nut.po.pane.wlogframe.clear -relx 0.3 -rely 0.79 -relheight 0.06 -relwidth 0.63
@@ -4512,38 +4512,6 @@ grid [canvas .loadframe.c -width [expr {$::magnify * $cwidth}] -height [expr {$:
  }
 
 #end Main_alt
-}
-
-set get_procs_from_db {
-
-proc get_procs_from_db {args} {
-
-# Save the original one so we can chain to it
-rename unknown _original_unknown
-
-# Provide our own implementation
-proc unknown args {
- set pname [lindex $args 0]
- set arglist [lrange $args 1 end]
- set count [db eval {select count(*) from tcl_code where name = $pname}]
- if {$count == 1} {
-  set pcode [db eval {select code from tcl_code where name = $pname}]
-  uplevel 1 {*}$pcode
-  $pname {*}$arglist
-  } else {
-  uplevel 1 [list _original_unknown {*}$args]
-  }
- }
-
-db function format_meal_id format_meal_id
-db function n6hufa n6hufa
-db function update_am update_am
-db function setRefDesc setRefDesc
-db function monoright monoright
-
-}
-
-#end get_procs_from_db
 }
 
 set drawClock {
@@ -7886,7 +7854,7 @@ if {[dbmem eval {select count(*) from options}] == 0} {
 }
 
 db eval {BEGIN}
-db eval {insert or replace into version values('NUTsqlite 1.9.5',NULL)}
+db eval {insert or replace into version values('NUTsqlite 1.9.6',NULL)}
 db eval {delete from tcl_code}
 db eval {insert or replace into tcl_code values('Main',$Main)}
 db eval {insert or replace into tcl_code values('InitialLoad',$InitialLoad)}
@@ -7964,7 +7932,6 @@ db eval {insert or replace into tcl_code values('rank2vf',$rank2vf)}
 db eval {insert or replace into tcl_code values('rm2vf',$rm2vf)}
 db eval {insert or replace into tcl_code values('changedv_vitmin',$changedv_vitmin)}
 db eval {insert or replace into tcl_code values('Main_alt',$Main_alt)}
-db eval {insert or replace into tcl_code values('get_procs_from_db',$get_procs_from_db)}
 db eval {insert or replace into tcl_code values('drawClock',$drawClock)}
 db eval {insert or replace into tcl_code values('stundenZeigerAuf',$stundenZeigerAuf)}
 db eval {insert or replace into tcl_code values('minutenZeigerAuf',$minutenZeigerAuf)}

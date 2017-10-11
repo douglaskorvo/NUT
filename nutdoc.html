@@ -518,6 +518,37 @@ sqlite> select wldate, round(weight - weight * bodyfat / 100, 1) as leanmass, ro
 20150619|125.3|32.3|93.0
 </B></PRE>
 <P>
+Another approach along the same lines is the following view which gives
+an equation expressing the correlation between your bodyfat percentage and 
+your weight computed
+from your accumulated weight log measurements.  If your weight turns out to be
+more
+than the equation predicts, 
+your body composition has improved; i.e. you have more lean mass at a given bodyfat percentage than you used to.
+This is useful to know if you are using calorie auto-set mode or another
+strategy and want to be
+sure it is improving your body composition rather than making it worse.
+<P>
+<B><PRE>
+sqlite> .schema bf2weight
+CREATE VIEW bf2weight as select round(bf2weight,1) || ' * bodyfat% + ' || round(sumy / n - bf2weight * sumx / n,1) || ' = total weight' from (select (sumxy - (sumx * sumy / n)) / (sumxx - (sumx * sumx / n)) as bf2weight, sumy, n, sumx from (select sum(x) as sumx, sum(y) as sumy, sum(x*y) as sumxy, sum(x*x) as sumxx, n from (select bodyfat as x, weight as y, cast ((select count(*) from wlog) as real) as n from wlog)));
+sqlite> select * from bf2weight;
+2.5 * bodyfat% + 102.6 = total weight
+</B></PRE>
+<P>
+Let's redo the previous view to select the numbers instead of
+stating the equation.  That way we can join the view to the wlog table to
+see how today's weight compares to what is predicted from our previous efforts.
+If today's weight (column 2) is greater than the prediction (column 3), we're
+doing better than we were.
+<P>
+<B><PRE>
+sqlite> .schema bf2weight
+CREATE VIEW bf2weight as select bf2weight, sumy / n - bf2weight * sumx / n as yintercept from (select (sumxy - (sumx * sumy / n)) / (sumxx - (sumx * sumx / n)) as bf2weight, sumy, n, sumx from (select sum(x) as sumx, sum(y) as sumy, sum(x*y) as sumxy, sum(x*x) as sumxx, n from (select bodyfat as x, weight as y, cast ((select count(*) from wlog) as real) as n from wlog)));
+sqlite> select wldate, weight, round(bf2weight * bodyfat + yintercept, 1) from wlog join bf2weight where wldate = (select max(wldate) from wlog);
+20150809|159.0|155.5
+</B></PRE>
+<P>
 Now, let's turn to a different task.  I've created a bad recipe and I want to
 delete it from the database.  First, I find the record in the food_des table and
 ask to see  "NDB_No", the primary key for foods:
@@ -660,6 +691,20 @@ sqlite> select NDB_No, Shrt_Desc, round(K / CHO_NONFIB) as val from food_des whe
 11257|Lettuce, red leaf, raw (lactuca sativa var. crispa)|138.0
 11253|Lettuce, green leaf, raw (lactuca sativa var. crispa)|124.0
 11252|Lettuce,iceberg (incl crisphead types),raw|80.0
+</B></PRE>
+<P>
+If you're interested in Omega-3 fatty acids, here's a view that does the
+computation that
+<B>NUT</B>
+uses, and then we can answer the question "What (supposedly)
+was the percentage of Omega-6 in my tissue phospholipids
+during the summer of 2014?" 
+<P>
+<B><PRE>
+sqlite> .schema n6hufacalc
+CREATE VIEW n6hufacalc as select meal_id, 100.0 / (1.0 + 0.0441 / (900 * SHORT6 / ENERC_KCAL) * (1.0 + (900 * SHORT3 / ENERC_KCAL) / 0.0555 + (900 * LONG3 / ENERC_KCAL) / 0.005 + (900 * (FASAT + FAMS + FAPU - SHORT6 - LONG6 - SHORT3 - LONG3) / ENERC_KCAL) / 5.0 + (900 * SHORT6 / ENERC_KCAL) / 0.175)) + 100.0 / (1.0 + 0.7 / (900 * LONG6 / ENERC_KCAL) * (1.0 + (900 * SHORT3 / ENERC_KCAL) / 3.0)) as n6hufa from meals;
+sqlite> select round(avg(n6hufa)) from n6hufacalc where meal_id between 2014060000 and 2014090000;
+57.0
 </B></PRE>
 <P>
 The next query concerns how non-fiber carb has varied in my diet, but I

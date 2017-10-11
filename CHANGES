@@ -1,3 +1,10 @@
+2015-09-12 Some of the confusion installing on a Mac appears to be that their
+           unzip of multiple files puts the files in yet another separate
+           directory.  I changed the README to explicitly say this, and I added
+           a line in nut.tcl that allows the user to cd to some directory
+           before anything happens.  The Mac Tcl launcher doesn't pick a good
+           working directory, and this can easily solve that problem.
+
 2015-08-02 NUTsqlite-1.9.5 released.
 
 2015-08-02 Changed font on analog clock in alternate GUI load screen.  It

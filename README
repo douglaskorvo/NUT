@@ -30,6 +30,9 @@ INSTALLATION of NUTsqlite
    the USDA zipfile you need or you can get it from the USDA.  The procedure
    will be the same when the USDA releases a new database and you want to
    upgrade your NUTsqlite database while preserving your personal data.
+   On the Mac, unzipping a zip file with multiple files in it results in a
+   separate directory, so you need to move all these files to the single 
+   directory you are going to use.
 
 3) Run "updateNUT.tcl" to create or upgrade the NUT code in the SQLite database
    that runs the application.  If upgrading, you have to be in the same

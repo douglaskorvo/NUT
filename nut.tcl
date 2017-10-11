@@ -36,6 +36,11 @@ set LegacyFileDir "~/.nutdb"
 # resolution-independent window manager.
 set appSize 0.0
 
+# Do you need to cd to the right directory before the program starts?
+# If so, edit and uncomment the following line:
+
+# cd /home/jim/src/nut
+
 #
 # end of easy user changes
 #
