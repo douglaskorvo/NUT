@@ -203,7 +203,7 @@ grid remove .nut.rm.newtheusualbutton
 
 grid [ttk::radiobutton .nut.rm.grams -text "Grams" -width 6 -variable ::GRAMSopt -value 1 -style meal.TRadiobutton] -row 0 -column 13 -columnspan 3 -sticky nsw
 grid [ttk::radiobutton .nut.rm.ounces -text "Ounces" -width 6 -variable ::GRAMSopt -value 0 -style meal.TRadiobutton] -row 1 -column 13 -columnspan 3 -sticky nsw
-grid [ttk::button .nut.rm.analysismeal -text "Analysis" -command SwitchToAnalysis -style lightmeal.TButton] -row 3 -rowspan 2 -column 13 -columnspan 3 -sticky nw
+grid [ttk::button .nut.rm.analysismeal -text "Switch to Analysis" -command SwitchToAnalysis -style lightmeal.TButton] -row 3 -rowspan 2 -column 13 -columnspan 3 -sticky nw
 grid remove .nut.rm.grams
 grid remove .nut.rm.ounces
 grid remove .nut.rm.analysismeal
@@ -1094,7 +1094,7 @@ if {!$::ALTGUI} {
  place forget .nut.rm.frlistbox
  place .nut.rm.grams -relx 0.87 -rely 0.0046296296 -relheight 0.044444444 -relwidth 0.11
  place .nut.rm.ounces -relx 0.87 -rely 0.0490740736 -relheight 0.044444444 -relwidth 0.11
- place .nut.rm.analysismeal -relx 0.87 -rely 0.14722222 -relheight 0.044444444 -relwidth 0.11
+ place .nut.rm.analysismeal -width 18 -relx 0.87 -rely 0.14722222 -relheight 0.044444444 -relwidth 0.11
  }
  SwitchToMenu
  set ::like_this_rm ""
@@ -2911,7 +2911,7 @@ set SwitchToAnalysis {
 
 proc SwitchToAnalysis {args} {
 
- .nut.rm.analysismeal configure -text "Menu" -command SwitchToMenu
+ .nut.rm.analysismeal configure -text "Switch to Menu" -command SwitchToMenu
  if {!$::ALTGUI} {
   grid remove $::rmMainPane
   grid remove .nut.rm.grams
@@ -2936,7 +2936,7 @@ set SwitchToMenu {
 
 proc SwitchToMenu {args} {
 
-.nut.rm.analysismeal configure -text "Analysis" -command SwitchToAnalysis
+.nut.rm.analysismeal configure -text "Switch to Analysis" -command SwitchToAnalysis
 if {!$::ALTGUI} {
  grid remove $::rmMainPane
  grid .nut.rm.grams
@@ -3170,7 +3170,7 @@ proc mealchange {args} {
   place $::rmMainPane -relx 0.0 -rely 0.25 -relheight 0.75 -relwidth 1.0
   place .nut.rm.grams -relx 0.87 -rely 0.0046296296 -relheight 0.044444444 -relwidth 0.11
   place .nut.rm.ounces -relx 0.87 -rely 0.0490740736 -relheight 0.044444444 -relwidth 0.11
-  place .nut.rm.analysismeal -relx 0.87 -rely 0.14722222 -relheight 0.044444444 -relwidth 0.11
+  place .nut.rm.analysismeal -width 18 -relx 0.87 -rely 0.14722222 -relheight 0.044444444 -relwidth 0.11
   }
  set julian [expr { ($::mealoffset / $::meals_per_day) + [clock format [clock scan [expr {$::mealbase / 100}] -format {%Y%m%d}] -format {%J}] }]
  set mealnum [expr { $::mealbase % 100 + $::mealoffset % $::meals_per_day }]
@@ -3806,7 +3806,7 @@ ttk::radiobutton .nut.rm.grams -text "Grams" -width 6 -variable ::GRAMSopt -valu
 ttk::radiobutton .nut.rm.ounces -text "Ounces" -width 6 -variable ::GRAMSopt -value 0 -style meal.TRadiobutton
 #place .nut.rm.grams -relx 0.87 -rely 0.0046296296 -relheight 0.044444444 -relwidth 0.11
 #place .nut.rm.ounces -relx 0.87 -rely 0.0490740736 -relheight 0.044444444 -relwidth 0.11
-Button .nut.rm.analysismeal -text "Analysis" -background "#FF9428" -command SwitchToAnalysis -relief raised
+Button .nut.rm.analysismeal -text "Switch To Analysis" -background "#FF9428" -command SwitchToAnalysis -relief raised
 #place .nut.rm.analysismeal -relx 0.87 -rely 0.14722222 -relheight 0.044444444 -relwidth 0.11
 
 menubutton .nut.rm.setmpd -background "#FF9428" -text "Delete All Meals and Set Meals Per Day" -relief raised -menu .nut.rm.setmpd.m
