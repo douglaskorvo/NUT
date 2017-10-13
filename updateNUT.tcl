@@ -18,6 +18,10 @@ exec tclsh "$0" "$@"
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+set SKIP_DIALOG 0
+foreach arg $argv {
+    if {$arg eq "--skip-dialog"} { set SKIP_DIALOG 1 }
+}
 
 package require sqlite3
 
@@ -33,7 +37,26 @@ source src/source.tcl
 package require Tk
 
 wm geometry . 1x1
-set appSize 0.0
+
+set defaultAppSize      0.0
+set defaultLinuxAppSize 0.7
+# appSize is a factor to create fonts and windows that match screen resolution.
+# 0.0 works well on Windows and the Mac, but on Linux,
+# appSizes between 0.7 and 1.3 go between small to almost fullscreen
+# and look the same at all screen resolutions when you don't have a
+# resolution-independent window manager.
+
+# set appSize 1.0
+
+set OS [lindex $tcl_platform(os) 0]
+if {[info exists appSize]} {
+    # Already set. Do nothing
+} elseif { $OS == {Linux} } {
+    set appSize $defaultLinuxAppSize
+} else {
+    set appSize $defaultAppSize
+}
+
 set ::magnify [expr {[winfo vrootheight .] / 711.0}]
 if {[string is double -strict $appSize] && $appSize > 0.0} {
  set ::magnify [expr {$::magnify * $appSize}]
@@ -50,6 +73,10 @@ option add *Dialog.msg.wrapLength [expr {400 * $::magnify}]
 option add *Dialog.dtl.wrapLength [expr {400 * $::magnify}]
 
 db eval {select max(version) as "::version" from version} { }
-
-tk_messageBox -type ok -title "updateNUT.tcl Completion" -message "There\'s a signpost up ahead.\n\nNext stop:  ${::version}"
+if {$SKIP_DIALOG != 1} {
+    tk_messageBox -type ok -title "updateNUT.tcl Completion" -message "There\'s a signpost up ahead.\n\nNext stop:  ${::version}"
+}\
+else {
+    puts "Update complete"
+}
 exit 0
