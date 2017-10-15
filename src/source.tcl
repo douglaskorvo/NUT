@@ -3456,89 +3456,33 @@ foreach x {am rm vf ar} {
   place .nut.${x}.nbw.screen${screen}.b${nut} -relx 0.005 -rely 0.0725 -relheight 0.06 -relwidth 0.165
   place .nut.${x}.nbw.screen${screen}.l${nut} -relx 0.18 -rely 0.0725 -relheight 0.06 -relwidth 0.165
   }
+ proc place_nbw_buttons {relx nuts} {
+  upvar rely rely x x screen screen background background
+  foreach nut $nuts {
+   button .nut.${x}.nbw.screen${screen}.b${nut} -textvariable ::${nut}b -command "NewStory $nut $x" -background "#FFFF00"
+   if {$x == "ar"} {
+    ttk::entry .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -justify right
+   } else {
+    label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -background $background($x) -anchor e
+   }
+   label .nut.${x}.nbw.screen${screen}.lu${nut} -textvariable ::${nut}u -background $background($x) -anchor w
+   place .nut.${x}.nbw.screen${screen}.b${nut}  -relx $relx                  -rely $rely -relheight 0.06 -relwidth 0.165
+   place .nut.${x}.nbw.screen${screen}.l${nut}  -relx [expr {$relx + 0.175}] -rely $rely -relheight 0.06 -relwidth 0.1
+   place .nut.${x}.nbw.screen${screen}.lu${nut} -relx [expr {$relx + 0.275}] -rely $rely -relheight 0.06 -relwidth 0.055
+   set rely [expr {$rely + 0.06625}]
+  }
+ }
  set rely 0.205
- foreach nut {FAT FASAT FAMS FAPU OMEGA6 LA AA OMEGA3 ALA EPA DHA CHOLE} {
-  button .nut.${x}.nbw.screen${screen}.b${nut} -textvariable ::${nut}b -command "NewStory $nut $x" -background "#FFFF00"
-  if {$x == "ar"} {
-   ttk::entry .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -justify right
-   } else {
-   label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -background $background($x) -anchor e
-   }
-  label .nut.${x}.nbw.screen${screen}.lu${nut} -textvariable ::${nut}u -background $background($x) -anchor w
-  place .nut.${x}.nbw.screen${screen}.b${nut} -relx 0.005 -rely $rely -relheight 0.06 -relwidth 0.165
-  place .nut.${x}.nbw.screen${screen}.l${nut} -relx 0.18 -rely $rely -relheight 0.06 -relwidth 0.1
-  place .nut.${x}.nbw.screen${screen}.lu${nut} -relx 0.28 -rely $rely -relheight 0.06 -relwidth 0.055
-  set rely [expr {$rely + 0.06625}]
-  }
+ place_nbw_buttons 0.005 {FAT FASAT FAMS FAPU OMEGA6 LA AA OMEGA3 ALA EPA DHA CHOLE}
  set rely 0.00625
- foreach nut {CHOCDF FIBTG} {
-  button .nut.${x}.nbw.screen${screen}.b${nut} -textvariable ::${nut}b -command "NewStory $nut $x" -background "#FFFF00"
-  if {$x == "ar"} {
-   ttk::entry .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -justify right
-   } else {
-   label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -background $background($x) -anchor e
-   }
-  label .nut.${x}.nbw.screen${screen}.lu${nut} -textvariable ::${nut}u -background $background($x) -anchor w
-  place .nut.${x}.nbw.screen${screen}.b${nut} -relx 0.335 -rely $rely -relheight 0.06 -relwidth 0.165
-  place .nut.${x}.nbw.screen${screen}.l${nut} -relx 0.51 -rely $rely -relheight 0.06 -relwidth 0.1
-  place .nut.${x}.nbw.screen${screen}.lu${nut} -relx 0.61 -rely $rely -relheight 0.06 -relwidth 0.055
-  set rely [expr {$rely + 0.06625}]
-  }
+ place_nbw_buttons 0.335 {CHOCDF FIBTG}
  set rely 0.205
- foreach nut {VITA_IU THIA RIBF NIA PANTAC VITB6A FOL VITB12 VITC VITD VITE VITK1} {
-  button .nut.${x}.nbw.screen${screen}.b${nut} -textvariable ::${nut}b -command "NewStory $nut $x" -background "#FFFF00"
-  if {$x == "ar"} {
-   ttk::entry .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -justify right
-   } else {
-   label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -background $background($x) -anchor e
-   }
-  label .nut.${x}.nbw.screen${screen}.lu${nut} -textvariable ::${nut}u -background $background($x) -anchor w
-  place .nut.${x}.nbw.screen${screen}.b${nut} -relx 0.335 -rely $rely -relheight 0.06 -relwidth 0.165
-  place .nut.${x}.nbw.screen${screen}.l${nut} -relx 0.51 -rely $rely -relheight 0.06 -relwidth 0.1
-  place .nut.${x}.nbw.screen${screen}.lu${nut} -relx 0.61 -rely $rely -relheight 0.06 -relwidth 0.055
-  set rely [expr {$rely + 0.06625}]
-  }
+ place_nbw_buttons 0.335 {VITA_IU THIA RIBF NIA PANTAC VITB6A FOL VITB12 VITC VITD VITE VITK1}
  set rely 0.00625
- foreach nut {PROCNT} {
-  button .nut.${x}.nbw.screen${screen}.b${nut} -textvariable ::${nut}b -command "NewStory $nut $x" -background "#FFFF00"
-  if {$x == "ar"} {
-   ttk::entry .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -justify right
-   } else {
-   label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -background $background($x) -anchor e
-   }
-  label .nut.${x}.nbw.screen${screen}.lu${nut} -textvariable ::${nut}u -background $background($x) -anchor w
-  place .nut.${x}.nbw.screen${screen}.b${nut} -relx 0.665 -rely $rely -relheight 0.06 -relwidth 0.165
-  place .nut.${x}.nbw.screen${screen}.l${nut} -relx 0.84 -rely $rely -relheight 0.06 -relwidth 0.1
-  place .nut.${x}.nbw.screen${screen}.lu${nut} -relx 0.94 -rely $rely -relheight 0.06 -relwidth 0.055
-  set rely [expr {$rely + 0.06625}]
-  }
- foreach nut {CHO_NONFIB} {
-  button .nut.${x}.nbw.screen${screen}.b${nut} -textvariable ::${nut}b -command "NewStory $nut $x" -background "#FFFF00"
-  if {$x == "ar"} {
-   ttk::entry .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -justify right
-   } else {
-   label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -background $background($x) -anchor e
-   }
-  label .nut.${x}.nbw.screen${screen}.lu${nut} -textvariable ::${nut}u -background $background($x) -anchor w
-  place .nut.${x}.nbw.screen${screen}.b${nut} -relx 0.665 -rely $rely -relheight 0.06 -relwidth 0.165
-  place .nut.${x}.nbw.screen${screen}.l${nut} -relx 0.84 -rely $rely -relheight 0.06 -relwidth 0.1
-  place .nut.${x}.nbw.screen${screen}.lu${nut} -relx 0.94 -rely $rely -relheight 0.06 -relwidth 0.055
-  set rely [expr {$rely + 0.06625}]
-  }
+ place_nbw_buttons 0.665 {PROCNT}
+ place_nbw_buttons 0.665 {CHO_NONFIB}
  set rely [expr {$rely + 0.06625}]
- foreach nut {CA CU FE MG MN P K SE NA ZN} {
-  button .nut.${x}.nbw.screen${screen}.b${nut} -textvariable ::${nut}b -command "NewStory $nut $x" -background "#FFFF00"
-  if {$x == "ar"} {
-   ttk::entry .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -justify right
-   } else {
-   label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -background $background($x) -anchor e
-   }
-  label .nut.${x}.nbw.screen${screen}.lu${nut} -textvariable ::${nut}u -background $background($x) -anchor w
-  place .nut.${x}.nbw.screen${screen}.b${nut} -relx 0.665 -rely $rely -relheight 0.06 -relwidth 0.165
-  place .nut.${x}.nbw.screen${screen}.l${nut} -relx 0.84 -rely $rely -relheight 0.06 -relwidth 0.1
-  place .nut.${x}.nbw.screen${screen}.lu${nut} -relx 0.94 -rely $rely -relheight 0.06 -relwidth 0.055
-  set rely [expr {$rely + 0.06625}]
-  }
+ place_nbw_buttons 0.665 {CA CU FE MG MN P K SE NA ZN}
  set rely [expr {$rely + 0.06625}]
  foreach nut {FAPU1} {
   button .nut.${x}.nbw.screen${screen}.b${nut} -text "Omega-6/3 Balance" -command "NewStory FAPU $x" -background "#FFFF00"
@@ -3546,164 +3490,34 @@ foreach x {am rm vf ar} {
   place .nut.${x}.nbw.screen${screen}.b${nut} -relx 0.665 -rely $rely -relheight 0.06 -relwidth 0.165
   place .nut.${x}.nbw.screen${screen}.l${nut} -relx 0.84 -rely $rely -relheight 0.06 -relwidth 0.165
   }
+
  set screen 2
  set rely 0.13875
- foreach nut {CHOCDF FIBTG STARCH SUGAR FRUS GALS GLUS LACS MALS SUCS} {
-  button .nut.${x}.nbw.screen${screen}.b${nut} -textvariable ::${nut}b -command "NewStory $nut $x" -background "#FFFF00"
-  if {$x == "ar"} {
-   ttk::entry .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -justify right
-   } else {
-   label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -background $background($x) -anchor e
-   }
-  label .nut.${x}.nbw.screen${screen}.lu${nut} -textvariable ::${nut}u -background $background($x) -anchor w
-  place .nut.${x}.nbw.screen${screen}.b${nut} -relx 0.005 -rely $rely -relheight 0.06 -relwidth 0.165
-  place .nut.${x}.nbw.screen${screen}.l${nut} -relx 0.18 -rely $rely -relheight 0.06 -relwidth 0.1
-  place .nut.${x}.nbw.screen${screen}.lu${nut} -relx 0.28 -rely $rely -relheight 0.06 -relwidth 0.055
-  set rely [expr {$rely + 0.06625}]
-  }
+ place_nbw_buttons 0.005 {CHOCDF FIBTG STARCH SUGAR FRUS GALS GLUS LACS MALS SUCS}
  set rely 0.13875
- foreach nut {PROCNT ADPROT ALA_G ARG_G ASP_G CYS_G GLU_G GLY_G HISTN_G HYP ILE_G} {
-  button .nut.${x}.nbw.screen${screen}.b${nut} -textvariable ::${nut}b -command "NewStory $nut $x" -background "#FFFF00"
-  if {$x == "ar"} {
-   ttk::entry .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -justify right
-   } else {
-   label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -background $background($x) -anchor e
-   }
-  label .nut.${x}.nbw.screen${screen}.lu${nut} -textvariable ::${nut}u -background $background($x) -anchor w
-  place .nut.${x}.nbw.screen${screen}.b${nut} -relx 0.335 -rely $rely -relheight 0.06 -relwidth 0.165
-  place .nut.${x}.nbw.screen${screen}.l${nut} -relx 0.51 -rely $rely -relheight 0.06 -relwidth 0.1
-  place .nut.${x}.nbw.screen${screen}.lu${nut} -relx 0.61 -rely $rely -relheight 0.06 -relwidth 0.055
-  set rely [expr {$rely + 0.06625}]
-  }
+ place_nbw_buttons 0.335 {PROCNT ADPROT ALA_G ARG_G ASP_G CYS_G GLU_G GLY_G HISTN_G HYP ILE_G}
  set rely 0.13875
- foreach nut {LEU_G LYS_G MET_G PHE_G PRO_G SER_G THR_G TRP_G TYR_G VAL_G} {
-  button .nut.${x}.nbw.screen${screen}.b${nut} -textvariable ::${nut}b -command "NewStory $nut $x" -background "#FFFF00"
-  if {$x == "ar"} {
-   ttk::entry .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -justify right
-   } else {
-   label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -background $background($x) -anchor e
-   }
-  label .nut.${x}.nbw.screen${screen}.lu${nut} -textvariable ::${nut}u -background $background($x) -anchor w
-  place .nut.${x}.nbw.screen${screen}.b${nut} -relx 0.665 -rely $rely -relheight 0.06 -relwidth 0.165
-  place .nut.${x}.nbw.screen${screen}.l${nut} -relx 0.84 -rely $rely -relheight 0.06 -relwidth 0.1
-  place .nut.${x}.nbw.screen${screen}.lu${nut} -relx 0.94 -rely $rely -relheight 0.06 -relwidth 0.055
-  set rely [expr {$rely + 0.06625}]
-  }
+ place_nbw_buttons 0.665 {LEU_G LYS_G MET_G PHE_G PRO_G SER_G THR_G TRP_G TYR_G VAL_G}
+
  set screen 3
  set rely 0.0725
- foreach nut {ENERC_KJ ASH WATER CAFFN THEBRN ALC FLD BETN CHOLN FOLAC FOLFD FOLDFE RETOL} {
-  button .nut.${x}.nbw.screen${screen}.b${nut} -textvariable ::${nut}b -command "NewStory $nut $x" -background "#FFFF00"
-  if {$x == "ar"} {
-   ttk::entry .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -justify right
-   } else {
-   label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -background $background($x) -anchor e
-   }
-  label .nut.${x}.nbw.screen${screen}.lu${nut} -textvariable ::${nut}u -background $background($x) -anchor w
-  place .nut.${x}.nbw.screen${screen}.b${nut} -relx 0.005 -rely $rely -relheight 0.06 -relwidth 0.165
-  place .nut.${x}.nbw.screen${screen}.l${nut} -relx 0.18 -rely $rely -relheight 0.06 -relwidth 0.1
-  place .nut.${x}.nbw.screen${screen}.lu${nut} -relx 0.28 -rely $rely -relheight 0.06 -relwidth 0.055
-  set rely [expr {$rely + 0.06625}]
-  }
+ place_nbw_buttons 0.005 {ENERC_KJ ASH WATER CAFFN THEBRN ALC FLD BETN CHOLN FOLAC FOLFD FOLDFE RETOL}
  set rely 0.0725
- foreach nut {VITA_RAE ERGCAL CHOCAL VITD_BOTH VITB12_ADDED VITE_ADDED VITK1D MK4 TOCPHA TOCPHB TOCPHG TOCPHD TOCTRA} {
-  button .nut.${x}.nbw.screen${screen}.b${nut} -textvariable ::${nut}b -command "NewStory $nut $x" -background "#FFFF00"
-  if {$x == "ar"} {
-   ttk::entry .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -justify right
-   } else {
-   label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -background $background($x) -anchor e
-   }
-  label .nut.${x}.nbw.screen${screen}.lu${nut} -textvariable ::${nut}u -background $background($x) -anchor w
-  place .nut.${x}.nbw.screen${screen}.b${nut} -relx 0.335 -rely $rely -relheight 0.06 -relwidth 0.165
-  place .nut.${x}.nbw.screen${screen}.l${nut} -relx 0.51 -rely $rely -relheight 0.06 -relwidth 0.1
-  place .nut.${x}.nbw.screen${screen}.lu${nut} -relx 0.61 -rely $rely -relheight 0.06 -relwidth 0.055
-  set rely [expr {$rely + 0.06625}]
-  }
+ place_nbw_buttons 0.335 {VITA_RAE ERGCAL CHOCAL VITD_BOTH VITB12_ADDED VITE_ADDED VITK1D MK4 TOCPHA TOCPHB TOCPHG TOCPHD TOCTRA}
  set rely 0.0725
- foreach nut {TOCTRB TOCTRG TOCTRD CARTA CARTB CRYPX LUT_ZEA LYCPN CHOLE PHYSTR SITSTR CAMD5 STID7} {
-  button .nut.${x}.nbw.screen${screen}.b${nut} -textvariable ::${nut}b -command "NewStory $nut $x" -background "#FFFF00"
-  if {$x == "ar"} {
-   ttk::entry .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -justify right
-   } else {
-   label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -background $background($x) -anchor e
-   }
-  label .nut.${x}.nbw.screen${screen}.lu${nut} -textvariable ::${nut}u -background $background($x) -anchor w
-  place .nut.${x}.nbw.screen${screen}.b${nut} -relx 0.665 -rely $rely -relheight 0.06 -relwidth 0.165
-  place .nut.${x}.nbw.screen${screen}.l${nut} -relx 0.84 -rely $rely -relheight 0.06 -relwidth 0.1
-  place .nut.${x}.nbw.screen${screen}.lu${nut} -relx 0.94 -rely $rely -relheight 0.06 -relwidth 0.055
-  set rely [expr {$rely + 0.06625}]
-  }
+ place_nbw_buttons 0.665 {TOCTRB TOCTRG TOCTRD CARTA CARTB CRYPX LUT_ZEA LYCPN CHOLE PHYSTR SITSTR CAMD5 STID7}
  set screen 4
  set rely 0.00625
- foreach nut {FASAT F4D0 F6D0 F8D0 F10D0 F12D0 F13D0 F14D0 F15D0 F16D0 F17D0 F18D0 F20D0 F22D0 F24D0} {
-  button .nut.${x}.nbw.screen${screen}.b${nut} -textvariable ::${nut}b -command "NewStory $nut $x" -background "#FFFF00"
-  if {$x == "ar"} {
-   ttk::entry .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -justify right
-   } else {
-   label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -background $background($x) -anchor e
-   }
-  label .nut.${x}.nbw.screen${screen}.lu${nut} -textvariable ::${nut}u -background $background($x) -anchor w
-  place .nut.${x}.nbw.screen${screen}.b${nut} -relx 0.17 -rely $rely -relheight 0.06 -relwidth 0.165
-  place .nut.${x}.nbw.screen${screen}.l${nut} -relx 0.345 -rely $rely -relheight 0.06 -relwidth 0.1
-  place .nut.${x}.nbw.screen${screen}.lu${nut} -relx 0.445 -rely $rely -relheight 0.06 -relwidth 0.055
-  set rely [expr {$rely + 0.06625}]
-  }
+ place_nbw_buttons 0.17 {FASAT F4D0 F6D0 F8D0 F10D0 F12D0 F13D0 F14D0 F15D0 F16D0 F17D0 F18D0 F20D0 F22D0 F24D0}
  set rely 0.0725
- foreach nut {FAMS F14D1 F15D1 F16D1 F16D1C F17D1 F18D1 F18D1C F20D1 F22D1 F22D1C F24D1C} {
-  button .nut.${x}.nbw.screen${screen}.b${nut} -textvariable ::${nut}b -command "NewStory $nut $x" -background "#FFFF00"
-  if {$x == "ar"} {
-   ttk::entry .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -justify right
-   } else {
-   label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -background $background($x) -anchor e
-   }
-  label .nut.${x}.nbw.screen${screen}.lu${nut} -textvariable ::${nut}u -background $background($x) -anchor w
-  place .nut.${x}.nbw.screen${screen}.b${nut} -relx 0.5 -rely $rely -relheight 0.06 -relwidth 0.165
-  place .nut.${x}.nbw.screen${screen}.l${nut} -relx 0.675 -rely $rely -relheight 0.06 -relwidth 0.1
-  place .nut.${x}.nbw.screen${screen}.lu${nut} -relx 0.775 -rely $rely -relheight 0.06 -relwidth 0.055
-  set rely [expr {$rely + 0.06625}]
-  }
+ place_nbw_buttons 0.5 {FAMS F14D1 F15D1 F16D1 F16D1C F17D1 F18D1 F18D1C F20D1 F22D1 F22D1C F24D1C}
  set screen 5
  set rely 0.205
- foreach nut {FAPU F18D2 F18D2CN6 F18D3 F18D3CN3 F18D3CN6 F18D4 F20D2CN6} {
-  button .nut.${x}.nbw.screen${screen}.b${nut} -textvariable ::${nut}b -command "NewStory $nut $x" -background "#FFFF00"
-  if {$x == "ar"} {
-   ttk::entry .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -justify right
-   } else {
-   label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -background $background($x) -anchor e
-   }
-  label .nut.${x}.nbw.screen${screen}.lu${nut} -textvariable ::${nut}u -background $background($x) -anchor w
-  place .nut.${x}.nbw.screen${screen}.b${nut} -relx 0.005 -rely $rely -relheight 0.06 -relwidth 0.165
-  place .nut.${x}.nbw.screen${screen}.l${nut} -relx 0.18 -rely $rely -relheight 0.06 -relwidth 0.1
-  place .nut.${x}.nbw.screen${screen}.lu${nut} -relx 0.28 -rely $rely -relheight 0.06 -relwidth 0.055
-  set rely [expr {$rely + 0.06625}]
-  }
+ place_nbw_buttons 0.005 {FAPU F18D2 F18D2CN6 F18D3 F18D3CN3 F18D3CN6 F18D4 F20D2CN6}
  set rely 0.13875
- foreach nut {F20D3 F20D3N3 F20D3N6 F20D4 F20D4N6 F20D5 F21D5 F22D4 F22D5 F22D6} {
-  button .nut.${x}.nbw.screen${screen}.b${nut} -textvariable ::${nut}b -command "NewStory $nut $x" -background "#FFFF00"
-  if {$x == "ar"} {
-   ttk::entry .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -justify right
-   } else {
-   label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -background $background($x) -anchor e
-   }
-  label .nut.${x}.nbw.screen${screen}.lu${nut} -textvariable ::${nut}u -background $background($x) -anchor w
-  place .nut.${x}.nbw.screen${screen}.b${nut} -relx 0.335 -rely $rely -relheight 0.06 -relwidth 0.165
-  place .nut.${x}.nbw.screen${screen}.l${nut} -relx 0.51 -rely $rely -relheight 0.06 -relwidth 0.1
-  place .nut.${x}.nbw.screen${screen}.lu${nut} -relx 0.61 -rely $rely -relheight 0.06 -relwidth 0.055
-  set rely [expr {$rely + 0.06625}]
-  }
+ place_nbw_buttons 0.335 {F20D3 F20D3N3 F20D3N6 F20D4 F20D4N6 F20D5 F21D5 F22D4 F22D5 F22D6}
  set rely 0.0725
- foreach nut {FATRN FATRNM F16D1T F18D1T F18D1TN7 F22D1T FATRNP F18D2I F18D2T F18D2TT F18D2CLA F18D3I} {
-  button .nut.${x}.nbw.screen${screen}.b${nut} -textvariable ::${nut}b -command "NewStory $nut $x" -background "#FFFF00"
-  if {$x == "ar"} {
-   ttk::entry .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -justify right
-   } else {
-   label .nut.${x}.nbw.screen${screen}.l${nut} -textvariable ::${nut}${x} -background $background($x) -anchor e
-   }
-  label .nut.${x}.nbw.screen${screen}.lu${nut} -textvariable ::${nut}u -background $background($x) -anchor w
-  place .nut.${x}.nbw.screen${screen}.b${nut} -relx 0.665 -rely $rely -relheight 0.06 -relwidth 0.165
-  place .nut.${x}.nbw.screen${screen}.l${nut} -relx 0.84 -rely $rely -relheight 0.06 -relwidth 0.1
-  place .nut.${x}.nbw.screen${screen}.lu${nut} -relx 0.94 -rely $rely -relheight 0.06 -relwidth 0.055
-  set rely [expr {$rely + 0.06625}]
-  }
+ place_nbw_buttons 0.665 {FATRN FATRNM F16D1T F18D1T F18D1TN7 F22D1T FATRNP F18D2I F18D2T F18D2TT F18D2CLA F18D3I}
  }
 
 bind .nut.am.nbw <<NotebookTabChanged>> NBWamTabChange
