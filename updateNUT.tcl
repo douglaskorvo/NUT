@@ -31,6 +31,7 @@ db eval {create table if not exists tcl_code(name text primary key, code text)}
 db eval {create table if not exists version(version text primary key unique, update_cd text)}
 ###
 source src/main.tcl
+source src/Main_alt.tcl
 source src/source.tcl
 ###
 db eval {BEGIN}
