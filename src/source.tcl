@@ -3752,7 +3752,7 @@ place .nut.am.mealsb -relx 0.64 -rely 0.088148146  -relheight 0.044444444 -relwi
 place .nut.am.meallabel -relx 0.76 -rely 0.088148146  -relheight 0.044444444 -relwidth 0.12
 place .nut.am.rangelabel -relx 0.0 -rely 0.15  -relheight 0.044444444 -relwidth 1.0
 
-scale .nut.rm.scale -background "#FF9428" -width [expr {$::magnify * 11}] -sliderlength [expr {$::magnify * 20}] -showvalue 0 -orient horizontal -variable ::mealoffset -from -100 -to 100 -command mealchange
+scale .nut.rm.scale -background "#FF9428" -width [expr {$::magnify * 11}] -sliderlength [expr {$::magnify * 20}] -showvalue 1 -orient horizontal -variable ::mealoffset -from -100 -to 100 -command mealchange
 place .nut.rm.scale -relx 0.0058 -rely 0.0046296296 -relheight 0.1 -relwidth 0.24
 
 menubutton .nut.rm.theusual -text "Customary Meals" -direction right -background "#FF9428" -anchor center -relief raised -menu .nut.rm.theusual.m
