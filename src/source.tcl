@@ -25,7 +25,7 @@ package require BWidget
 if {$appSize != 0.0} {
  set ::ALTGUI 1
  db eval {select code from tcl_code where name = 'Main_alt'} { }
- eval $code
+ $EVAL $code
  return
  } else {
  set ::ALTGUI 0
@@ -62,7 +62,7 @@ bind . <Destroy> {
  }
 
 db eval {select code from tcl_code where name = 'get_procs_from_db'} {
- eval $code
+ $EVAL $code
  }
 get_procs_from_db
 
@@ -733,9 +733,9 @@ if {[file exists "NUTR_DEF.txt"]} {
  grid [ttk::label .loadframe.label8 -text "Load Legacy Files and Write to Disk"] -column 1 -row 8 -padx [expr {$::magnify * 5}] -pady [expr {$::magnify * 5}] -sticky w
 
 db eval {select code from tcl_code where name = 'ComputeDerivedValues'} { }
-eval $code
+$EVAL $code
 db eval {select code from tcl_code where name = 'InitialLoad'} { }
-eval $code
+$EVAL $code
  } else {
  set tablename [db eval {select name from sqlite_master where type='table' and name = "nutr_def"}]
  if { $tablename == "" } {
@@ -745,7 +745,7 @@ eval $code
   destroy .
   } else {
   db eval {select code from tcl_code where name = 'Start_NUT'} { }
-  eval $code
+  $EVAL $code
   }
  }
 
@@ -914,7 +914,7 @@ file rename -force "NUTR_DEF.txt" "NUTR_DEF.txt.loaded"
 set ::pbar(8) 100.0
 update
 db eval {select code from tcl_code where name = 'Start_NUT'} { }
-eval $code
+$EVAL $code
 wm deiconify .
 destroy .loadframe
 
@@ -3574,7 +3574,7 @@ set DiskDB [file nativename $DiskDB]
 db eval {select max(version) as "::version" from version} { }
 
 db eval {select code from tcl_code where name = 'get_procs_from_db'} {
- eval $code
+ $EVAL $code
  }
 get_procs_from_db
 
@@ -4508,7 +4508,7 @@ grid [canvas .loadframe.c -width [expr {$::magnify * $cwidth}] -height [expr {$:
   set ::THREADS 0
   } else {
   db eval {select code from tcl_code where name = 'InitialLoad_alt_GUI'} { }
-  eval $code
+  $EVAL $code
   }
  } else {
  set tablename [db eval {select name from sqlite_master where type='table' and name = "nutr_def"}]
@@ -4520,7 +4520,7 @@ grid [canvas .loadframe.c -width [expr {$::magnify * $cwidth}] -height [expr {$:
   exit 0
   } else {
   db eval {select code from tcl_code where name = 'Start_NUT_alt_GUI'} { }
-  eval $code
+  $EVAL $code
   }
  }
 
@@ -4844,7 +4844,7 @@ if {$::THREADS} {
  after cancel showTime
  destroy .loadframe
  db eval {select code from tcl_code where name = 'Start_NUT_alt_GUI'} { }
- eval $code
+ $EVAL $code
  }
 
 #end InitialLoad_alt_GUI

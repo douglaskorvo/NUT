@@ -56,11 +56,29 @@ if {[info exists appSize]} {
 #
 # end of easy user changes
 #
-
+proc verbose_eval {script} {
+    set cmd {}
+    foreach line [split $script \n] {
+    if {$line eq {}} {continue}
+        append cmd $line\n
+        if {[info complete $cmd]} {
+            puts -nonewline $cmd
+            puts -nonewline [uplevel 1 $cmd]
+            set cmd ""
+        }
+    }
+}
+set DEBUG 0
+foreach arg $argv {
+    if {$arg eq "--debug"} { set DEBUG 1 }
+}
 package require sqlite3
 sqlite3 db $DiskDB
 db timeout 10000
-
+set EVAL eval
+if {$DEBUG == 1} {
+  set EVAL verbose_eval
+}
 if {[catch { db eval {select code from tcl_code where name = 'Main'} { } }]} {
  package require Tk
  set ::magnify [expr {[winfo vrootheight .] / 711.0}]
@@ -76,5 +94,5 @@ if {[catch { db eval {select code from tcl_code where name = 'Main'} { } }]} {
  tk_messageBox -type ok -title "NUTsqlite" -message "Run the \"updateNUT.tcl\" script before the first invocation of NUT in order to create the SQLite database with its code inside it.  The \"updateNUT.tcl\" script is distributed with \"nut.tcl\" from http://nut.sourceforge.net and you will also have to download the USDA Nutrient Database from the same webpage.  After this, \"updateNUT.tcl\" is not required for anything and can be deleted, and then you run \"nut.tcl\" to start NUTsqlite."
  exit 0
  } else {
- eval $code
+ $EVAL $code
  }
